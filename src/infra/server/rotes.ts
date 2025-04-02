@@ -1,11 +1,14 @@
 import express, { Response } from "express";
+import { ControllerAdapter } from "../../integration/adapters/controller";
 import { ErrorHandlerMiddlewareAdapter } from "../../integration/adapters/error-handler-middleware";
 import { MiddlewareAdapter } from "../../integration/adapters/middleware";
 import { ProfileRequest } from "./request";
 export class Routes {
   public app = express();
-  //todo: dont forget bodyparser
-  constructor(private readonly middlewares: Array<MiddlewareAdapter>) {
+  constructor(
+    private readonly middlewares: Array<MiddlewareAdapter>,
+    private readonly controller: ControllerAdapter
+  ) {
     this.applyMiddlewares(this.middlewares);
     this.initializeRoutes();
   }
@@ -23,19 +26,12 @@ export class Routes {
     this.app.get(
       "/contracts/:id",
       async (req: ProfileRequest, res: Response): Promise<void> => {
-        res.status(501).json({ error: "Not implemented" });
+        const contractDto = await this.controller.GetContractById(
+          req.profileId || 0,
+          parseInt(req.params.id)
+        );
 
-        // const { id } = req.params;
-        // try {
-        //   const contract = await Contract.findOne({ where: { id } });
-        //   if (!contract) {
-        //     res.status(404).end();
-        //     return;
-        //   }
-        //   res.json(contract);
-        // } catch (error) {
-        //   res.status(500).json({ error: "Internal Server Error" });
-        // }
+        res.status(200).json(contractDto);
       }
     );
 
@@ -43,7 +39,10 @@ export class Routes {
     this.app.get(
       "/contracts",
       async (req: ProfileRequest, res: Response): Promise<void> => {
-        res.status(501).json({ error: "Not implemented" });
+        const contractDtos = await this.controller.ListContracts(
+          req.profileId || 0
+        );
+        res.status(200).json(contractDtos);
       }
     );
 
@@ -51,7 +50,10 @@ export class Routes {
     this.app.get(
       "/jobs/unpaid",
       async (req: ProfileRequest, res: Response): Promise<void> => {
-        res.status(501).json({ error: "Not implemented" });
+        const jobDtos = await this.controller.ListUnpaidJobs(
+          req.profileId || 0
+        );
+        res.status(200).json(jobDtos);
       }
     );
 
@@ -59,15 +61,22 @@ export class Routes {
     this.app.post(
       "/jobs/:job_id/pay",
       async (req: ProfileRequest, res: Response): Promise<void> => {
-        res.status(501).json({ error: "Not implemented" });
+        const jobDto = await this.controller.PayJob(
+          req.profileId || 0,
+          parseInt(req.params.job_id)
+        );
+        res.status(200).json(jobDto);
       }
     );
 
     // Route: POST /balances/deposit/:userId
     this.app.post(
-      "/balances/deposit/:userId",
+      "/balances/deposit/:clientId",
       async (req: ProfileRequest, res: Response): Promise<void> => {
-        res.status(501).json({ error: "Not implemented" });
+        const jobDto = await this.controller.DepositToClient(
+          parseInt(req.params.clientId)
+        );
+        res.status(200).json(jobDto);
       }
     );
 
@@ -75,7 +84,12 @@ export class Routes {
     this.app.get(
       "/admin/best-profession",
       async (req: ProfileRequest, res: Response): Promise<void> => {
-        res.status(501).json({ error: "Not implemented" });
+        const mostSuccessfulProfessionDto =
+          await this.controller.GetMostSuccessfulProfession(
+            req.query.start as string,
+            req.query.end as string
+          );
+        res.status(200).json(mostSuccessfulProfessionDto);
       }
     );
 
@@ -83,7 +97,12 @@ export class Routes {
     this.app.get(
       "/admin/best-clients",
       async (req: ProfileRequest, res: Response): Promise<void> => {
-        res.status(501).json({ error: "Not implemented" });
+        const bestClients = await this.controller.GetBestClients(
+          req.query.start as string,
+          req.query.end as string,
+          parseInt(req.query.limit as string)
+        );
+        res.status(200).json(bestClients);
       }
     );
   }

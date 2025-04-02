@@ -3,8 +3,8 @@ import { ListQueryEntity } from "../../../domain/entities/list-query";
 const defaultLimit = 2;
 
 export class ListQueryDto {
-  start?: Date;
-  end?: Date;
+  start?: string;
+  end?: string;
   limit?: number;
 
   constructor({
@@ -12,8 +12,8 @@ export class ListQueryDto {
     end,
     limit,
   }: {
-    start: Date;
-    end: Date;
+    start: string;
+    end: string;
     limit: number;
   }) {
     this.start = start;
@@ -22,6 +22,10 @@ export class ListQueryDto {
   }
 
   toEntity(): ListQueryEntity {
-    return new ListQueryEntity(this);
+    return new ListQueryEntity({
+      end: this.end ? new Date(this.end) : undefined,
+      start: this.start ? new Date(this.start) : undefined,
+      limit: this.limit,
+    });
   }
 }

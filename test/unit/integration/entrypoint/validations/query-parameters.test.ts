@@ -18,7 +18,7 @@ describe("queryParametersValidation", () => {
       expect(parsedError.errorDetails).toEqual([
         {
           field: "start",
-          message: '"start" must be a valid date',
+          message: '"start" must be in iso format',
         },
       ]);
     }

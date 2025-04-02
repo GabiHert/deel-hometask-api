@@ -2,17 +2,21 @@ import joi from "joi";
 import { JoiValidator } from "./validator";
 
 const schema = joi.object({
-  start: joi.date(),
+  start: joi.string().isoDate(),
   end: joi
-    .date()
+    .string()
+    .isoDate()
     .custom((value, helpers) => {
-      if (value <= helpers.state.ancestors[0].start) {
-        return helpers.error("grater than start", { value });
+      const startDate = new Date(helpers.state.ancestors[0].start);
+      const endDate = new Date(value);
+
+      if (endDate <= startDate) {
+        return helpers.error("greater than start", { value });
       }
       return value;
     }, "Custom end date validation")
     .messages({
-      "grater than start": '"end" must be greater than "start"',
+      "greater than start": '"end" must be greater than "start"',
     }),
   page: joi.number().greater(0),
   limit: joi.number().greater(0),
