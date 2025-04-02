@@ -4,8 +4,7 @@ import { JoiValidator } from "./validator";
 const schema = joi.object({
   profileId: joi.number().required(),
 });
+const profileIdValidator = new JoiValidator(schema, "Invalid path parameters");
 
-export const profileIdPathParameterValidation = new JoiValidator(
-  schema,
-  "Invalid path parameters"
-).validate;
+export const profileIdPathParameterValidation =
+  profileIdValidator.validate.bind(profileIdValidator);

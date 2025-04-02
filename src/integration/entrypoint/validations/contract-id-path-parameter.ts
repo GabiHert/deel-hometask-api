@@ -5,7 +5,7 @@ const schema = joi.object({
   contractId: joi.number().greater(0).required(),
 });
 
-export const contractIdPathParameterValidation = new JoiValidator(
-  schema,
-  "Invalid path parameters"
-).validate.bind(new JoiValidator(schema, "Invalid path parameters"));
+const contractIdValidator = new JoiValidator(schema, "Invalid path parameters");
+
+export const contractIdPathParameterValidation =
+  contractIdValidator.validate.bind(contractIdValidator);
