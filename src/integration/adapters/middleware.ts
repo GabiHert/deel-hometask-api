@@ -1,4 +1,5 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
+import { ProfileRequest } from "../../infra/server/request";
 
 /**
  * Interface representing an authorization middleware.
@@ -8,5 +9,5 @@ import { NextFunction, Request, Response } from "express";
  * next function to determine if the request should proceed.
  */
 export interface MiddlewareAdapter {
-  handle(req: Request, res: Response, next: NextFunction): void;
+  handle(req: ProfileRequest, res: Response, next: NextFunction): void;
 }

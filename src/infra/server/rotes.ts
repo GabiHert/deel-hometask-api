@@ -1,6 +1,7 @@
-import express, { Request, Response } from "express";
+import express, { Response } from "express";
 import { ErrorHandlerMiddlewareAdapter } from "../../integration/adapters/error-handler-middleware";
 import { MiddlewareAdapter } from "../../integration/adapters/middleware";
+import { ProfileRequest } from "./request";
 export class Routes {
   public app = express();
   //todo: dont forget bodyparser
@@ -21,7 +22,7 @@ export class Routes {
     // Route: GET /contracts/:id
     this.app.get(
       "/contracts/:id",
-      async (req: Request, res: Response): Promise<void> => {
+      async (req: ProfileRequest, res: Response): Promise<void> => {
         res.status(501).json({ error: "Not implemented" });
 
         // const { id } = req.params;
@@ -41,7 +42,7 @@ export class Routes {
     // Route: GET /contracts
     this.app.get(
       "/contracts",
-      async (req: Request, res: Response): Promise<void> => {
+      async (req: ProfileRequest, res: Response): Promise<void> => {
         res.status(501).json({ error: "Not implemented" });
       }
     );
@@ -49,7 +50,7 @@ export class Routes {
     // Route: GET /jobs/unpaid
     this.app.get(
       "/jobs/unpaid",
-      async (req: Request, res: Response): Promise<void> => {
+      async (req: ProfileRequest, res: Response): Promise<void> => {
         res.status(501).json({ error: "Not implemented" });
       }
     );
@@ -57,7 +58,7 @@ export class Routes {
     // Route: POST /jobs/:job_id/pay
     this.app.post(
       "/jobs/:job_id/pay",
-      async (req: Request, res: Response): Promise<void> => {
+      async (req: ProfileRequest, res: Response): Promise<void> => {
         res.status(501).json({ error: "Not implemented" });
       }
     );
@@ -65,7 +66,7 @@ export class Routes {
     // Route: POST /balances/deposit/:userId
     this.app.post(
       "/balances/deposit/:userId",
-      async (req: Request, res: Response): Promise<void> => {
+      async (req: ProfileRequest, res: Response): Promise<void> => {
         res.status(501).json({ error: "Not implemented" });
       }
     );
@@ -73,7 +74,7 @@ export class Routes {
     // Route: GET /admin/best-profession
     this.app.get(
       "/admin/best-profession",
-      async (req: Request, res: Response): Promise<void> => {
+      async (req: ProfileRequest, res: Response): Promise<void> => {
         res.status(501).json({ error: "Not implemented" });
       }
     );
@@ -81,7 +82,7 @@ export class Routes {
     // Route: GET /admin/best-clients
     this.app.get(
       "/admin/best-clients",
-      async (req: Request, res: Response): Promise<void> => {
+      async (req: ProfileRequest, res: Response): Promise<void> => {
         res.status(501).json({ error: "Not implemented" });
       }
     );

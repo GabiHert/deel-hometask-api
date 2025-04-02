@@ -8,8 +8,8 @@ export class JoiValidator {
     private readonly errorMessage: string
   ) {}
 
-  validate(query: any): void {
-    const { error } = this.schema.validate(query, { abortEarly: false });
+  validate(input: any): void {
+    const { error } = this.schema.validate(input, { abortEarly: false });
     if (error) {
       const errorDetails: ErrorDetail[] = error.details.map((detail) => ({
         field: detail.path.join("."),

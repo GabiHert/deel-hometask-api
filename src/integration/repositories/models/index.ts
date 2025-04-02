@@ -1,4 +1,4 @@
-import { Contract } from './contract';
-import { Job } from './job';
-import { Profile } from './profile';
-export { Contract, Job, Profile };
+import { ContractModel } from "./contract";
+import { Job as JobModel } from "./job";
+import { Profile as ProfileModel } from "./profile";
+export { ContractModel, JobModel, ProfileModel };

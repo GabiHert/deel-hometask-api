@@ -1,8 +1,8 @@
 import Sequelize from "sequelize";
 import { connection } from "../../../infra/db";
 
-export class Contract extends Sequelize.Model {}
-Contract.init(
+export class ContractModel extends Sequelize.Model {}
+ContractModel.init(
   {
     terms: {
       type: Sequelize.TEXT,

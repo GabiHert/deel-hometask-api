@@ -6,8 +6,12 @@ export class QueryParametersValidator implements MiddlewareAdapter {
     private readonly validator: (queryParameters: any) => Promise<void>
   ) {}
   async handle(req: Request, _res: Response, next: Function): Promise<void> {
-    const { query } = req;
-    await this.validator(query);
-    next();
+    try {
+      const { query } = req;
+      await this.validator(query);
+      next();
+    } catch (error) {
+      next(error);
+    }
   }
 }

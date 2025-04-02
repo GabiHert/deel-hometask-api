@@ -8,7 +8,7 @@ const schema = joi.object({
   limit: joi.number(),
 });
 
-export const validatePathParameters = new JoiValidator(
+export const queryParametersValidation = new JoiValidator(
   schema,
   "Invalid query parameters"
 ).validate;
