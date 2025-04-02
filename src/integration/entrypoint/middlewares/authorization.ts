@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 
 interface ProfileRequest extends Request {
     profile?: any;
-}
+} 
 
 export const getProfile = async (req: ProfileRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
