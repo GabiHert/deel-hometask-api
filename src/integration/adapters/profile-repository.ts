@@ -20,7 +20,7 @@ export interface ProfileRepositoryAdapter {
    * @param limit - The maximum number of clients to retrieve.
    * @returns A promise that resolves to an array of profile entities representing the most successful clients.
    */
-  getMostSuccessfulClients: (
+  getTopPayingClients: (
     startDate: Date,
     endDate: Date,
     limit: number

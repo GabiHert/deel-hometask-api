@@ -1,31 +1,32 @@
+import {
+  ContractStatusEnum,
+  contractStatusFromString,
+} from "../enums/contract-status";
+
 export class ContractEntity {
   id: number;
-  firstName: string;
-  lastName: string;
-  profession: string;
-  balance: number;
-  type: string;
+  terms: string;
+  status: ContractStatusEnum;
+  clientId: string;
+  contractorId: number;
 
   constructor({
     id,
-    firstName,
-    lastName,
-    profession,
-    balance,
-    type,
+    terms,
+    status,
+    clientId,
+    contractorId,
   }: {
     id: number;
-    firstName: string;
-    lastName: string;
-    profession: string;
-    balance: number;
-    type: string;
+    terms: string;
+    status: string;
+    clientId: string;
+    contractorId: number;
   }) {
     this.id = id;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.profession = profession;
-    this.balance = balance;
-    this.type = type;
+    this.terms = terms;
+    this.status = contractStatusFromString(status);
+    this.clientId = clientId;
+    this.contractorId = contractorId;
   }
 }
