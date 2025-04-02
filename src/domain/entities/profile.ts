@@ -1,4 +1,4 @@
-class ProfileEntity {
+export class ProfileEntity {
   id: number;
   firstName: string;
   lastName!: string;

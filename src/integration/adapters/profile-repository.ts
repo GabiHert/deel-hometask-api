@@ -1,3 +1,5 @@
+import { ProfileEntity } from "../../domain/entities/profile";
+
 /**
  * Interface representing a repository for managing profile-related data.
  */
