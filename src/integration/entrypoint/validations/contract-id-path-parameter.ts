@@ -2,10 +2,10 @@ import joi from "joi";
 import { JoiValidator } from "./validator";
 
 const schema = joi.object({
-  contractId: joi.number().required(),
+  contractId: joi.number().greater(0).required(),
 });
 
 export const contractIdPathParameterValidation = new JoiValidator(
   schema,
   "Invalid path parameters"
-).validate;
+).validate.bind(new JoiValidator(schema, "Invalid path parameters"));
