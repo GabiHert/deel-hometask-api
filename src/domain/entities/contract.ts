@@ -1,17 +1,17 @@
-export class ProfileEntity {
+export class ContractEntity {
   id: number;
   firstName: string;
-  lastName!: string;
+  lastName: string;
   profession: string;
   balance: number;
   type: string;
 
   constructor({
-    balance,
-    firstName,
     id,
+    firstName,
     lastName,
     profession,
+    balance,
     type,
   }: {
     id: number;

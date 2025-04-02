@@ -3,7 +3,7 @@ import { ProfileEntity } from "../../domain/entities/profile";
 /**
  * Interface representing a repository for managing profile-related data.
  */
-export interface ProfileRepository {
+export interface ProfileRepositoryAdapter {
   /**
    * Retrieves a profile by its unique identifier.
    *
@@ -35,4 +35,16 @@ export interface ProfileRepository {
    * @returns A promise that resolves to the profession name.
    */
   getTopEarningProfession: (startDate: Date, endDate: Date) => Promise<string>;
+
+  /**
+   * Deposits money into a client's balance.
+   *
+   * @param profileId - The unique identifier of the profile.
+   * @param amount - The amount of money to deposit.
+   * @returns A promise that resolves to the updated profile entity.
+   */
+  depositToProfileBalance: (
+    clientId: number,
+    amount: number
+  ) => Promise<ProfileEntity>;
 }

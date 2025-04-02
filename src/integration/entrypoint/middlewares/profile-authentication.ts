@@ -2,11 +2,11 @@ import { Response } from "express";
 import { ProfileNotFoundError } from "../../../domain/errors/profile-not-found";
 import { ProfileRequest } from "../../../infra/server/request";
 import { MiddlewareAdapter } from "../../adapters/middleware";
-import { ProfileRepository } from "../../adapters/profile-repository";
+import { ProfileRepositoryAdapter } from "../../adapters/profile-repository";
 import { UnauthorizedError } from "../errors/unauthorized";
 
 export class ProfileAuthentication implements MiddlewareAdapter {
-  constructor(private readonly profileRepository: ProfileRepository) {}
+  constructor(private readonly profileRepository: ProfileRepositoryAdapter) {}
   private validateProfileId(profileId: string | undefined): number {
     if (!profileId) {
       throw new UnauthorizedError("profile_id is required");
