@@ -1,3 +1,4 @@
+import { ClientDepositDto } from "../entrypoint/dtos/client-deposit";
 import { ContractDto } from "../entrypoint/dtos/contract";
 import { JobDto } from "../entrypoint/dtos/job";
 import { TopEarningProfessionMetricsDto } from "../entrypoint/dtos/top-earning-profession-metrics";
@@ -39,9 +40,13 @@ export interface ControllerAdapter {
   /**
    * Deposits funds to a client's account.
    * @param profileId - The ID of the profile making the deposit.
+   * @param clientDeposit - The details of the deposit transaction.
    * @returns A promise that resolves to the details of the deposit transaction.
    */
-  DepositToClient(profileId: number): Promise<JobDto>;
+  DepositToClient(
+    profileId: number,
+    clientDeposit: ClientDepositDto
+  ): Promise<JobDto>;
 
   /**
    * Retrieves the most successful profession within a specified date range.

@@ -1,6 +1,7 @@
 import express, { Response } from "express";
 import { ControllerAdapter } from "../../integration/adapters/controller";
 import { MiddlewareAdapter } from "../../integration/adapters/middleware";
+import { ClientDepositDto } from "../../integration/entrypoint/dtos/client-deposit";
 import { ProfileRequest } from "./request";
 export class Routes {
   public app = express();
@@ -80,8 +81,10 @@ export class Routes {
       this.app.use(this.profileIdPathParameterValidatorMiddleware),
       this.app.use(this.clientDepositBodyValidationMiddleware),
       async (req: ProfileRequest, res: Response): Promise<void> => {
+        const clientDeposit = new ClientDepositDto(req.body);
         const jobDto = await this.controller.DepositToClient(
-          parseInt(req.params.clientId)
+          parseInt(req.params.clientId),
+          clientDeposit
         );
         res.status(200).json(jobDto);
       }
