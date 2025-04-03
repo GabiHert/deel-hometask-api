@@ -12,9 +12,9 @@ export class ListQueryDto {
     end,
     limit,
   }: {
-    start: string;
-    end: string;
-    limit: number;
+    start?: string;
+    end?: string;
+    limit?: number;
   }) {
     this.start = start;
     this.end = end;

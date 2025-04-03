@@ -4,7 +4,7 @@ export class JobDto {
   description: string;
   price: number;
   paid: boolean;
-  paymentDate: string;
+  paymentDate: string | null;
   contractId: number;
 
   constructor({
@@ -17,7 +17,7 @@ export class JobDto {
     this.description = description;
     this.price = price;
     this.paid = paid;
-    this.paymentDate = paymentDate;
+    this.paymentDate = paymentDate ? new Date(paymentDate).toISOString() : null;
     this.contractId = contractId;
   }
 

@@ -1,6 +1,6 @@
 import { ListQueryEntity } from "../../domain/entities/list-query";
 import { ProfileEntity } from "../../domain/entities/profile";
-import { TopEarningProfessionMetrics as TopEarningProfessionMetricsEntity } from "../../domain/entities/top-earning-profession-metrics";
+import { TopEarningProfessionMetricsEntity } from "../../domain/entities/top-earning-profession-metrics";
 import { TopPayingClientEntity } from "../../domain/entities/top-paying-client";
 
 /**

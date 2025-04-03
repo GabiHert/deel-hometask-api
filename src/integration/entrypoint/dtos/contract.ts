@@ -4,7 +4,7 @@ export class ContractDto {
   id: number;
   terms: string;
   status: string;
-  clientId: string;
+  clientId: number;
   contractorId: number;
   constructor({ id, terms, status, clientId, contractorId }: ContractEntity) {
     this.id = id;

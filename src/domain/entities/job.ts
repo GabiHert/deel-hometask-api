@@ -1,11 +1,13 @@
 export class JobEntity {
+  id: number;
   description: string;
   price: number;
   paid: boolean;
-  paymentDate: string;
+  paymentDate?: Date;
   contractId: number;
 
   constructor({
+    id,
     description,
     price,
     paid,
@@ -13,6 +15,7 @@ export class JobEntity {
     contractId,
   }: {
     description: string;
+    id: number;
     price: number;
     paid: boolean;
     paymentDate: string;
@@ -21,7 +24,8 @@ export class JobEntity {
     this.description = description;
     this.price = price;
     this.paid = paid;
-    this.paymentDate = paymentDate;
+    this.paymentDate = paymentDate ? new Date(paymentDate) : undefined;
     this.contractId = contractId;
+    this.id = id;
   }
 }

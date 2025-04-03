@@ -7,7 +7,7 @@ export class ContractEntity {
   id: number;
   terms: string;
   status: ContractStatusEnum;
-  clientId: string;
+  clientId: number;
   contractorId: number;
 
   constructor({
@@ -20,7 +20,7 @@ export class ContractEntity {
     id: number;
     terms: string;
     status: string;
-    clientId: string;
+    clientId: number;
     contractorId: number;
   }) {
     this.id = id;
