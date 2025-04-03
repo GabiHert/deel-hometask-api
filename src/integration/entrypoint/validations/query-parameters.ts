@@ -39,7 +39,7 @@ export class QueryParametersValidator extends JoiValidator {
     limit: joi.number().greater(0),
   });
 
-  protected validationStrategy(
+  validationStrategy(
     _path?: any,
     _body?: any,
     query?: any

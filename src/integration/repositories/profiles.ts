@@ -28,7 +28,6 @@ export class ProfileRepository implements ProfileRepositoryAdapter {
     const { whereClause, replacements: dateReplacements } =
       QueryBuilder.buildWhereClauseForPaymentDate(start, end);
 
-    // Add pagination replacements
     const replacements = { ...dateReplacements, limit, offset };
 
     const results = await connection.query(
@@ -77,8 +76,8 @@ export class ProfileRepository implements ProfileRepositoryAdapter {
       LIMIT ${limit}
       `,
       {
-      replacements,
-      type: sequelize.QueryTypes.SELECT,
+        replacements,
+        type: sequelize.QueryTypes.SELECT,
       }
     );
 

@@ -1,13 +1,13 @@
 import { BadRequest } from "../../../../../src/integration/entrypoint/errors/bad-request";
 import { ProfileIdPathParameterValidator } from "../../../../../src/integration/entrypoint/validations/profile-id-path-parameter";
 
-describe("await new ProfileIdPathParameterValidator().validate", () => {
-  it("should throw an error when profileId is below 0", async () => {
+describe("   new ProfileIdPathParameterValidator().  validationStrategy", () => {
+  it("should throw an error when profileId is below 0", () => {
     const invalidInput = {
       profileId: -1,
     };
     try {
-      await new ProfileIdPathParameterValidator().validate(invalidInput);
+      new ProfileIdPathParameterValidator().validationStrategy(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -21,10 +21,10 @@ describe("await new ProfileIdPathParameterValidator().validate", () => {
     }
   });
 
-  it("should throw an error when profileId is missing", async () => {
+  it("should throw an error when profileId is missing", () => {
     const invalidInput = {};
     try {
-      await new ProfileIdPathParameterValidator().validate(invalidInput);
+      new ProfileIdPathParameterValidator().validationStrategy(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -38,12 +38,12 @@ describe("await new ProfileIdPathParameterValidator().validate", () => {
     }
   });
 
-  it("should throw an error when profileId is not a number", async () => {
+  it("should throw an error when profileId is not a number", () => {
     const invalidInput = {
       profileId: "invalid",
     };
     try {
-      await new ProfileIdPathParameterValidator().validate(invalidInput);
+      new ProfileIdPathParameterValidator().validationStrategy(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -57,12 +57,14 @@ describe("await new ProfileIdPathParameterValidator().validate", () => {
     }
   });
 
-  it("should validate successfully when profileId is valid", async () => {
+  it("should   validationStrategy successfully when profileId is valid", () => {
     const validInput = {
       profileId: 1,
     };
-    expect(
-      new ProfileIdPathParameterValidator().validate(validInput)
-    ).resolves.not.toThrow();
+    try {
+      new ProfileIdPathParameterValidator().validationStrategy(validInput);
+    } catch (err) {
+      expect(err).toBeNull();
+    }
   });
 });

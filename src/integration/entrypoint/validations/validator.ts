@@ -2,7 +2,6 @@ import { NextFunction, Response } from "express";
 import Joi from "joi";
 import { ErrorDetail } from "../../../domain/errors/application-base-error";
 import { ProfileRequest } from "../../../infra/server/request";
-import { MiddlewareAdapter } from "../../adapters/middleware";
 import { BadRequest } from "../errors/bad-request";
 
 export abstract class JoiValidator {
@@ -16,11 +15,7 @@ export abstract class JoiValidator {
     _query?: any
   ): Joi.ValidationResult;
 
-  validate: MiddlewareAdapter = async (
-    req: ProfileRequest,
-    res: Response,
-    next: NextFunction
-  ) => {
+  validate(req: ProfileRequest, res: Response, next: NextFunction) {
     try {
       const { error } = this.validationStrategy(
         req.params,
@@ -40,5 +35,5 @@ export abstract class JoiValidator {
     } catch (err) {
       next(err);
     }
-  };
+  }
 }

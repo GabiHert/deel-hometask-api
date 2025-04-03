@@ -22,12 +22,14 @@ describe("MetricsController", () => {
   describe("getMostSuccessfulProfession", () => {
     it("should return the most successful profession metrics", async () => {
       const listQueryDto = new ListQueryDto({});
-      const mockEntity: TopEarningProfessionMetricsEntity = {
-        profession: "Engineer",
-        totalEarnings: 10000,
-        averageEarningsPerJob: 123,
-        totalJobs: 2,
-      };
+      const mockEntity: TopEarningProfessionMetricsEntity[] = [
+        {
+          profession: "Engineer",
+          totalEarnings: 10000,
+          averageEarningsPerJob: 123,
+          totalJobs: 2,
+        },
+      ];
       profileRepositoryMock.getTopEarningProfessionMetrics.mockResolvedValue(
         mockEntity
       );
@@ -39,9 +41,9 @@ describe("MetricsController", () => {
       expect(
         profileRepositoryMock.getTopEarningProfessionMetrics
       ).toHaveBeenCalledWith(listQueryDto.toEntity());
-      expect(result).toBeInstanceOf(TopEarningProfessionMetricsDto);
-      expect(result.profession).toBe(mockEntity.profession);
-      expect(result.totalEarnings).toBe(mockEntity.totalEarnings);
+      expect(result).toBeInstanceOf(Array<TopEarningProfessionMetricsDto>);
+      expect(result[0].profession).toBe(mockEntity[0].profession);
+      expect(result[0].totalEarnings).toBe(mockEntity[0].totalEarnings);
     });
 
     it("should throw an error if the repository call fails", async () => {

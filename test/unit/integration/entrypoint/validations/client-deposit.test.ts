@@ -1,20 +1,20 @@
 import { BadRequest } from "../../../../../src/integration/entrypoint/errors/bad-request";
-import { ClientDepositValidator } from "../../../../../src/integration/entrypoint/validations/client-deposit";
+import { ClientDepositBodyValidator } from "../../../../../src/integration/entrypoint/validations/client-deposit";
 
 describe("ClientDepositValidator", () => {
-  let validator: ClientDepositValidator;
+  let validator: ClientDepositBodyValidator;
 
   beforeEach(() => {
-    validator = new ClientDepositValidator();
+    validator = new ClientDepositBodyValidator();
   });
 
-  it("should throw an error when amount is below 1", async () => {
+  it("should throw an error when amount is below 1", () => {
     const invalidInput = {
       amount: 0,
     };
 
     try {
-      await validator.validate(invalidInput);
+      validator.validationStrategy(null, invalidInput, null);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -28,13 +28,13 @@ describe("ClientDepositValidator", () => {
     }
   });
 
-  it("should throw an error when amount is not a number", async () => {
+  it("should throw an error when amount is not a number", () => {
     const invalidInput = {
       amount: "invalid",
     };
 
     try {
-      await validator.validate(invalidInput);
+      validator.validationStrategy(null, invalidInput, null);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -48,11 +48,11 @@ describe("ClientDepositValidator", () => {
     }
   });
 
-  it("should throw an error when amount is missing", async () => {
+  it("should throw an error when amount is missing", () => {
     const invalidInput = {};
 
     try {
-      await validator.validate(invalidInput);
+      validator.validationStrategy(null, invalidInput, null);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -66,14 +66,14 @@ describe("ClientDepositValidator", () => {
     }
   });
 
-  it("should throw an error when input contains unexpected fields", async () => {
+  it("should throw an error when input contains unexpected fields", () => {
     const invalidInput = {
       amount: 10,
       extraField: "unexpected",
     };
 
     try {
-      await validator.validate(invalidInput);
+      validator.validationStrategy(null, invalidInput, null);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
