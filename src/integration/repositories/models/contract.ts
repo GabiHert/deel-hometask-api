@@ -9,8 +9,8 @@ export class ContractModel extends Sequelize.Model {
       id: dataValues.id,
       terms: dataValues.terms,
       status: dataValues.status,
-      clientId: dataValues.clientId,
-      contractorId: dataValues.contractorId,
+      clientId: dataValues.ClientId,
+      contractorId: dataValues.ContractorId,
     });
   }
   static ToEntities(contracts: ContractModel[]): ContractEntity[] {
@@ -20,10 +20,6 @@ export class ContractModel extends Sequelize.Model {
 
 ContractModel.init(
   {
-    contractorId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-    },
     terms: {
       type: Sequelize.TEXT,
       allowNull: false,

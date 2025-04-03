@@ -82,7 +82,7 @@ export class Routes {
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const jobDto = await this.jobController.payJob(
           req.profileId || 0,
-          parseInt(req.params.job_id)
+          parseInt(req.params.jobId)
         );
         res.status(200).json(jobDto);
       }

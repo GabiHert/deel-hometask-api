@@ -56,34 +56,54 @@ export class JobRepository implements JobRepositoryAdapter {
 
       await this.updateClientBalance(clientId, updatedBalance, trx);
 
-      const updatedJob = await this.markJobAsPaid(jobId, trx);
+      const paymentDate = new Date();
 
-      return JobModel.ToEntity(updatedJob);
+      await JobModel.update(
+        {
+          paid: true,
+          paymentDate,
+        },
+        {
+          where: { id: jobId },
+          transaction: trx,
+          returning: true,
+        }
+      );
+      job.setDataValue("paid", true);
+      job.setDataValue("paymentDate", new Date());
+      return JobModel.ToEntity(job);
     });
   }
-
   private async fetchJobWithClient(jobId: number, clientId: number) {
     const job = await JobModel.findOne({
-      where: { id: jobId },
+      where: { id: jobId, paid: false },
+    });
+
+    if (!job) {
+      throw new Error("unpaid job not found");
+    }
+
+    const contract = await ContractModel.findOne({
+      where: { id: job.dataValues.ContractId },
       include: [
         {
-          model: ContractModel,
+          model: ProfileModel,
+          as: "Client",
+          where: { id: clientId, type: ProfileTypeEnum.CLIENT },
           required: true,
-          include: [
-            {
-              model: ProfileModel,
-              as: "Client",
-              where: { id: clientId, type: ProfileTypeEnum.CLIENT },
-              required: true,
-            },
-          ],
         },
       ],
     });
 
-    if (!job) {
-      throw new Error("Job or Client not found");
+    if (!contract) {
+      throw new Error("Contract not found");
     }
+
+    if (!contract.dataValues.Client) {
+      throw new Error("Client not found");
+    }
+
+    job.dataValues.Contract = contract;
 
     return job;
   }
@@ -115,14 +135,5 @@ export class JobRepository implements JobRepositoryAdapter {
       { balance: updatedBalance.toNumber() },
       { where: { id: clientId }, transaction: trx }
     );
-  }
-
-  private async markJobAsPaid(jobId: number, trx: any): Promise<any> {
-    const [_, [updatedJob]] = await JobModel.update(
-      { paid: true, paymentDate: new Date() },
-      { where: { id: jobId }, transaction: trx, returning: true }
-    );
-
-    return updatedJob;
   }
 }

@@ -140,6 +140,7 @@ async function seed() {
       ContractorId: 8,
     }),
     JobModel.create({
+      id: 1,
       description: "work",
       price: 200,
       ContractId: 1,
