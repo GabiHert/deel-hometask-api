@@ -1,5 +1,7 @@
-import { TopEarningProfessionMetrics as TopEarningProfessionMetricsEntity } from "../../domain/entities/top-earning-profession-metrics";
+import { ListQueryEntity } from "../../domain/entities/list-query";
 import { ProfileEntity } from "../../domain/entities/profile";
+import { TopEarningProfessionMetrics as TopEarningProfessionMetricsEntity } from "../../domain/entities/top-earning-profession-metrics";
+import { TopPayingClientEntity } from "../../domain/entities/top-paying-client";
 
 /**
  * Interface representing a repository for managing profile-related data.
@@ -16,28 +18,22 @@ export interface ProfileRepositoryAdapter {
   /**
    * Returns the clients who paid the most for jobs within the specified time period.
    *
-   * @param startDate - The start date of the time period.
-   * @param endDate - The end date of the time period.
-   * @param limit - The maximum number of clients to retrieve.
+   * @param listQuery - An object containing optional query parameters to filter, sort, or customize the search results.
    * @returns A promise that resolves to an array of profile entities representing the most successful clients.
    */
   getTopPayingClients: (
-    startDate: Date,
-    endDate: Date,
-    limit: number
-  ) => Promise<ProfileEntity[]>;
+    listQuery: ListQueryEntity
+  ) => Promise<TopPayingClientEntity[]>;
 
   /**
    * Returns the profession that earned the most money (sum of jobs paid) for any contractor
    * who worked within the specified time range.
    *
-   * @param startDate - The start date of the time period.
-   * @param endDate - The end date of the time period.
+   * @param listQuery - An object containing optional query parameters to filter, sort, or customize the search results.
    * @returns A promise that resolves to the the profession metrics.
    */
   getTopEarningProfessionMetrics: (
-    startDate?: Date,
-    endDate?: Date
+    listQuery: ListQueryEntity
   ) => Promise<TopEarningProfessionMetricsEntity>;
 
   /**

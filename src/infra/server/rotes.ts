@@ -1,7 +1,11 @@
 import express, { Response } from "express";
-import { ControllerAdapter } from "../../integration/adapters/controller";
+import { ClientControllerAdapter } from "../../integration/adapters/client-controller";
+import { ContractControllerAdapter } from "../../integration/adapters/contract-controller";
+import { JobControllerAdapter } from "../../integration/adapters/job-controller";
+import { MetricsControllerAdapter } from "../../integration/adapters/metrics-controller";
 import { MiddlewareAdapter } from "../../integration/adapters/middleware";
 import { ClientDepositDto } from "../../integration/entrypoint/dtos/client-deposit";
+import { ListQueryDto } from "../../integration/entrypoint/dtos/list-query";
 import { ProfileRequest } from "./request";
 export class Routes {
   public app = express();
@@ -12,7 +16,10 @@ export class Routes {
     private readonly jobIdIdPathParameterValidatorMiddleware: MiddlewareAdapter,
     private readonly profileIdPathParameterValidatorMiddleware: MiddlewareAdapter,
     private readonly clientDepositBodyValidationMiddleware: MiddlewareAdapter,
-    private readonly controller: ControllerAdapter
+    private readonly metricsController: MetricsControllerAdapter,
+    private readonly jobController: JobControllerAdapter,
+    private readonly contractController: ContractControllerAdapter,
+    private readonly clientController: ClientControllerAdapter
   ) {
     this.applyGlobalMiddlewares(globalMiddlewares);
     this.initializeRoutes();
@@ -32,7 +39,7 @@ export class Routes {
       this.app.use(this.profileIdAuthenticationMiddleware),
       this.app.use(this.contractIdPathParameterValidatorMiddleware),
       async (req: ProfileRequest, res: Response): Promise<void> => {
-        const contractDto = await this.controller.GetContractById(
+        const contractDto = await this.contractController.getContractById(
           req.profileId || 0,
           parseInt(req.params.id)
         );
@@ -44,7 +51,7 @@ export class Routes {
       "/contracts",
       this.app.use(this.profileIdAuthenticationMiddleware),
       async (req: ProfileRequest, res: Response): Promise<void> => {
-        const contractDtos = await this.controller.ListContracts(
+        const contractDtos = await this.contractController.listContracts(
           req.profileId || 0
         );
         res.status(200).json(contractDtos);
@@ -55,7 +62,7 @@ export class Routes {
       "/jobs/unpaid",
       this.app.use(this.profileIdAuthenticationMiddleware),
       async (req: ProfileRequest, res: Response): Promise<void> => {
-        const jobDtos = await this.controller.ListUnpaidJobs(
+        const jobDtos = await this.jobController.listUnpaidJobs(
           req.profileId || 0
         );
         res.status(200).json(jobDtos);
@@ -67,7 +74,7 @@ export class Routes {
       this.app.use(this.profileIdAuthenticationMiddleware),
       this.app.use(this.jobIdIdPathParameterValidatorMiddleware),
       async (req: ProfileRequest, res: Response): Promise<void> => {
-        const jobDto = await this.controller.PayJob(
+        const jobDto = await this.jobController.payJob(
           req.profileId || 0,
           parseInt(req.params.job_id)
         );
@@ -82,7 +89,7 @@ export class Routes {
       this.app.use(this.clientDepositBodyValidationMiddleware),
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const clientDeposit = new ClientDepositDto(req.body);
-        const jobDto = await this.controller.DepositToClient(
+        const jobDto = await this.clientController.depositToClient(
           parseInt(req.params.clientId),
           clientDeposit
         );
@@ -93,11 +100,13 @@ export class Routes {
     this.app.get(
       "/admin/best-profession",
       async (req: ProfileRequest, res: Response): Promise<void> => {
+        const listQuery = new ListQueryDto({
+          start: req.query.start as string,
+          end: req.query.end as string,
+          limit: parseInt(req.query.limit as string),
+        });
         const mostSuccessfulProfessionDto =
-          await this.controller.GetMostSuccessfulProfession(
-            req.query.start as string,
-            req.query.end as string
-          );
+          await this.metricsController.getMostSuccessfulProfession(listQuery);
         res.status(200).json(mostSuccessfulProfessionDto);
       }
     );
@@ -105,10 +114,13 @@ export class Routes {
     this.app.get(
       "/admin/best-clients",
       async (req: ProfileRequest, res: Response): Promise<void> => {
-        const bestClients = await this.controller.GetBestClients(
-          req.query.start as string,
-          req.query.end as string,
-          parseInt(req.query.limit as string)
+        const listQuery = new ListQueryDto({
+          start: req.query.start as string,
+          end: req.query.end as string,
+          limit: parseInt(req.query.limit as string),
+        });
+        const bestClients = await this.metricsController.listTopPayingClients(
+          listQuery
         );
         res.status(200).json(bestClients);
       }

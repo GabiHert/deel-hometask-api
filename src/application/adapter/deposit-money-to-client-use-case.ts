@@ -1,3 +1,4 @@
+import { ClientDepositEntity } from "../../domain/entities/client-deposit";
 import { ProfileEntity } from "../../domain/entities/profile";
 
 /**
@@ -8,11 +9,14 @@ import { ProfileEntity } from "../../domain/entities/profile";
  */
 export interface DepositToClientUseCaseAdapter {
   /**
-   * Processes the payment for a job associated with a specific profile and client.
+   * Adds a specified amount to the client's account balance.
    *
-   * @param profileId - The unique identifier of the profile associated with the job.
-   * @param clientId - The unique identifier of the client making the payment.
-   * @returns A promise that resolves to the updated profile entity after the payment is processed.
+   * @param profileId - The unique identifier of the client's profile.
+   * @param clientDeposit - An object containing details of the deposit, including the amount.
+   * @returns A promise that resolves to the updated profile entity after the deposit is successfully processed.
    */
-  payJob(profileId: number, clientId: number): Promise<ProfileEntity>;
+  deposit(
+    profileId: number,
+    clientDeposit: ClientDepositEntity
+  ): Promise<ProfileEntity>;
 }
