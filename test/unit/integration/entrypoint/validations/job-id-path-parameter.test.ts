@@ -1,11 +1,11 @@
 import { BadRequest } from "../../../../../src/integration/entrypoint/errors/bad-request";
-import { jobIdPathParameterValidation } from "../../../../../src/integration/entrypoint/validations/job-id-path-parameter";
+import { JobIdPathParameterValidator } from "../../../../../src/integration/entrypoint/validations/job-id-path-parameter";
 
-describe("jobIdPathParameterValidation", () => {
-  it("should throw an error when jobId is null", () => {
+describe("JobIdPathParameterValidator", () => {
+  it("should throw an error when jobId is null", async () => {
     const invalidInput = { jobId: null };
     try {
-      jobIdPathParameterValidation(invalidInput);
+      await new JobIdPathParameterValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -19,10 +19,10 @@ describe("jobIdPathParameterValidation", () => {
     }
   });
 
-  it("should throw an error when jobId is missing", () => {
+  it("should throw an error when jobId is missing", async () => {
     const invalidInput = {};
     try {
-      jobIdPathParameterValidation(invalidInput);
+      await new JobIdPathParameterValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -36,10 +36,10 @@ describe("jobIdPathParameterValidation", () => {
     }
   });
 
-  it("should throw an error when jobId is not a number", () => {
+  it("should throw an error when jobId is not a number", async () => {
     const invalidInput = { jobId: "abc" };
     try {
-      jobIdPathParameterValidation(invalidInput);
+      await new JobIdPathParameterValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -53,10 +53,10 @@ describe("jobIdPathParameterValidation", () => {
     }
   });
 
-  it("should throw an error when jobId is less than or equal to 0", () => {
+  it("should throw an error when jobId is less than or equal to 0", async () => {
     const invalidInput = { jobId: 0 };
     try {
-      jobIdPathParameterValidation(invalidInput);
+      await new JobIdPathParameterValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -70,8 +70,10 @@ describe("jobIdPathParameterValidation", () => {
     }
   });
 
-  it("should validate successfully when jobId is valid", () => {
+  it("should validate successfully when jobId is valid", async () => {
     const validInput = { jobId: 123 };
-    expect(() => jobIdPathParameterValidation(validInput)).not.toThrow();
+    expect(
+      new JobIdPathParameterValidator().validate(validInput)
+    ).resolves.not.toThrow();
   });
 });

@@ -1,11 +1,15 @@
 import joi from "joi";
 import { JoiValidator } from "./validator";
 
-const schema = joi.object({
-  contractId: joi.number().greater(0).required(),
-});
+export class ContractIdPathParameterValidator extends JoiValidator {
+  private readonly schema = joi.object({
+    contractId: joi.number().greater(0).required(),
+  });
+  protected validationStrategy(input: any): joi.ValidationResult {
+    return this.schema.validate(input);
+  }
+  constructor() {
+    super("Invalid path parameters");
+  }
+}
 
-const contractIdValidator = new JoiValidator(schema, "Invalid path parameters");
-
-export const contractIdPathParameterValidation =
-  contractIdValidator.validate.bind(contractIdValidator);

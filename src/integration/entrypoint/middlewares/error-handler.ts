@@ -15,17 +15,15 @@ function parseErrorToJson(err: ApplicationBaseError) {
   };
 }
 
-export class ErrorHandler implements ErrorHandlerMiddlewareAdapter {
-  handle(
-    err: Error,
-    _req: ProfileRequest,
-    res: Response,
-    _next: NextFunction
-  ): void {
-    let baseError: ApplicationBaseError = new InternalServerError(err.message);
-    if (err instanceof ApplicationBaseError) {
-      baseError = err;
-    }
-    res.status(baseError.statusCode).json(parseErrorToJson(baseError));
+export const errorHandler: ErrorHandlerMiddlewareAdapter = (
+  err: Error,
+  _req: ProfileRequest,
+  res: Response,
+  _next: NextFunction
+): void => {
+  let baseError: ApplicationBaseError = new InternalServerError(err.message);
+  if (err instanceof ApplicationBaseError) {
+    baseError = err;
   }
-}
+  res.status(baseError.statusCode).json(parseErrorToJson(baseError));
+};

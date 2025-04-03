@@ -1,8 +1,8 @@
 import { BadRequest } from "../../../../../src/integration/entrypoint/errors/bad-request";
-import { queryParametersValidation } from "../../../../../src/integration/entrypoint/validations/query-parameters";
+import { QueryParametersValidator } from "../../../../../src/integration/entrypoint/validations/query-parameters";
 
 describe("queryParametersValidation", () => {
-  it("should throw an error when 'start' is not a valid date", () => {
+  it("should throw an error when 'start' is not a valid date", async () => {
     const invalidInput = {
       start: "invalid-date",
       end: "2023-01-01",
@@ -10,7 +10,7 @@ describe("queryParametersValidation", () => {
       limit: 10,
     };
     try {
-      queryParametersValidation(invalidInput);
+      await new QueryParametersValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -24,7 +24,7 @@ describe("queryParametersValidation", () => {
     }
   });
 
-  it("should throw an error when 'end' is before 'start'", () => {
+  it("should throw an error when 'end' is before 'start'", async () => {
     const invalidInput = {
       start: "2023-01-02",
       end: "2023-01-01",
@@ -32,7 +32,7 @@ describe("queryParametersValidation", () => {
       limit: 10,
     };
     try {
-      queryParametersValidation(invalidInput);
+      await new QueryParametersValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -46,7 +46,7 @@ describe("queryParametersValidation", () => {
     }
   });
 
-  it("should throw an error when 'page' is less than or equal to 0", () => {
+  it("should throw an error when 'page' is less than or equal to 0", async () => {
     const invalidInput = {
       start: "2023-01-01",
       end: "2023-01-02",
@@ -54,7 +54,7 @@ describe("queryParametersValidation", () => {
       limit: 10,
     };
     try {
-      queryParametersValidation(invalidInput);
+      await new QueryParametersValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -68,7 +68,7 @@ describe("queryParametersValidation", () => {
     }
   });
 
-  it("should throw an error when 'limit' is less than or equal to 0", () => {
+  it("should throw an error when 'limit' is less than or equal to 0", async () => {
     const invalidInput = {
       start: "2023-01-01",
       end: "2023-01-02",
@@ -76,7 +76,7 @@ describe("queryParametersValidation", () => {
       limit: 0,
     };
     try {
-      queryParametersValidation(invalidInput);
+      await new QueryParametersValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -90,13 +90,15 @@ describe("queryParametersValidation", () => {
     }
   });
 
-  it("should validate successfully when all parameters are valid", () => {
+  it("should validate successfully when all parameters are valid", async () => {
     const validInput = {
       start: "2023-01-01",
       end: "2023-01-02",
       page: 1,
       limit: 10,
     };
-    expect(() => queryParametersValidation(validInput)).not.toThrow();
+    expect(
+      new QueryParametersValidator().validate(validInput)
+    ).resolves.not.toThrow();
   });
 });

@@ -1,10 +1,16 @@
 import joi from "joi";
 import { JoiValidator } from "./validator";
 
-const schema = joi.object({
-  profileId: joi.number().required(),
-});
-const profileIdValidator = new JoiValidator(schema, "Invalid path parameters");
+export class ProfileIdPathParameterValidator extends JoiValidator {
+  private readonly schema = joi.object({
+    profileId: joi.number().greater(0).required(),
+  });
 
-export const profileIdPathParameterValidation =
-  profileIdValidator.validate.bind(profileIdValidator);
+  protected validationStrategy(input: any): joi.ValidationResult {
+    return this.schema.validate(input);
+  }
+
+  constructor() {
+    super("Invalid path parameters");
+  }
+}

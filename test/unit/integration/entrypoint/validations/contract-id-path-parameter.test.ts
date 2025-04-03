@@ -1,18 +1,21 @@
 import { BadRequest } from "../../../../../src/integration/entrypoint/errors/bad-request";
-import { contractIdPathParameterValidation } from "../../../../../src/integration/entrypoint/validations/contract-id-path-parameter";
+import { ContractIdPathParameterValidator } from "../../../../../src/integration/entrypoint/validations/contract-id-path-parameter";
 
-describe("contractIdPathParameterValidation", () => {
-  it("should validate successfully when contractId is a valid number", () => {
+describe("ContractIdPathParameterValidator", () => {
+  it("should validate successfully when contractId is a valid number", async () => {
     const validInput = { contractId: 123 };
-    expect(() => contractIdPathParameterValidation(validInput)).not.toThrow();
+    await expect(
+      new ContractIdPathParameterValidator().validate(validInput)
+    ).resolves.not.toThrow();
   });
 
-  it("should throw an error when contractId is below 0", () => {
+  it("should throw an error when contractId is below 0", async () => {
     const invalidInput = {
       contractId: -1,
     };
+
     try {
-      contractIdPathParameterValidation(invalidInput);
+      await new ContractIdPathParameterValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -26,10 +29,10 @@ describe("contractIdPathParameterValidation", () => {
     }
   });
 
-  it("should throw an error when contractId is zero", () => {
+  it("should throw an error when contractId is zero", async () => {
     const invalidInput = { contractId: 0 };
     try {
-      contractIdPathParameterValidation(invalidInput);
+      await new ContractIdPathParameterValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -43,10 +46,10 @@ describe("contractIdPathParameterValidation", () => {
     }
   });
 
-  it("should throw an error when contractId is a decimal number", () => {
+  it("should throw an error when contractId is a decimal number", async () => {
     const invalidInput = { contractId: 123.45 };
     try {
-      contractIdPathParameterValidation(invalidInput);
+      await new ContractIdPathParameterValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -60,10 +63,10 @@ describe("contractIdPathParameterValidation", () => {
     }
   });
 
-  it("should throw an error when contractId is undefined", () => {
+  it("should throw an error when contractId is undefined", async () => {
     const invalidInput = { contractId: undefined };
     try {
-      contractIdPathParameterValidation(invalidInput);
+      await new ContractIdPathParameterValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -77,10 +80,10 @@ describe("contractIdPathParameterValidation", () => {
     }
   });
 
-  it("should throw an error when contractId is an empty string", () => {
+  it("should throw an error when contractId is an empty string", async () => {
     const invalidInput = { contractId: "" };
     try {
-      contractIdPathParameterValidation(invalidInput);
+      await new ContractIdPathParameterValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -94,10 +97,10 @@ describe("contractIdPathParameterValidation", () => {
     }
   });
 
-  it("should throw an error when contractId is null", () => {
+  it("should throw an error when contractId is null", async () => {
     const invalidInput = { contractId: null };
     try {
-      contractIdPathParameterValidation(invalidInput);
+      await new ContractIdPathParameterValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;
@@ -105,16 +108,16 @@ describe("contractIdPathParameterValidation", () => {
       expect(parsedError.errorDetails).toEqual([
         {
           field: "contractId",
-          message: '"contractId" is required',
+          message: '"contractId" must be a number',
         },
       ]);
     }
   });
 
-  it("should throw an error when contractId is missing", () => {
+  it("should throw an error when contractId is missing", async () => {
     const invalidInput = {};
     try {
-      contractIdPathParameterValidation(invalidInput);
+      await new ContractIdPathParameterValidator().validate(invalidInput);
     } catch (error) {
       expect(error).toBeInstanceOf(BadRequest);
       const parsedError = error as BadRequest;

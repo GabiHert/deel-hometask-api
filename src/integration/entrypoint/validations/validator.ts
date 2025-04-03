@@ -2,16 +2,15 @@ import Joi from "joi";
 import { ErrorDetail } from "../../../domain/errors/application-base-error";
 import { BadRequest } from "../errors/bad-request";
 
-export class JoiValidator {
-  constructor(
-    private readonly schema: Joi.Schema,
-    private readonly errorMessage: string
-  ) {}
+export abstract class JoiValidator {
+  constructor(private readonly errorMessage: string) {}
 
-  validate(input: any): void {
-    const { error } = this.schema.validate(input, { abortEarly: false });
+  protected abstract validationStrategy(input: any): Joi.ValidationResult;
+
+  async validate(input: any): Promise<void> {
+    const { error } = this.validationStrategy(input);
     if (error) {
-      const errorDetails: ErrorDetail[] = error.details.map((detail) => ({
+      const errorDetails: ErrorDetail[] = error.details.map((detail: any) => ({
         field: detail.path.join("."),
         message: detail.message,
       }));

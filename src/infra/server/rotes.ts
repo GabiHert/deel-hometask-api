@@ -1,23 +1,26 @@
 import express, { Response } from "express";
 import { ControllerAdapter } from "../../integration/adapters/controller";
-import { ErrorHandlerMiddlewareAdapter } from "../../integration/adapters/error-handler-middleware";
 import { MiddlewareAdapter } from "../../integration/adapters/middleware";
 import { ProfileRequest } from "./request";
 export class Routes {
   public app = express();
   constructor(
-    private readonly middlewares: Array<MiddlewareAdapter>,
+    globalMiddlewares: Array<MiddlewareAdapter>,
+    private readonly profileIdAuthenticationMiddleware: MiddlewareAdapter,
+    private readonly contractIdPathParameterValidatorMiddleware: MiddlewareAdapter,
+    private readonly jobIdIdPathParameterValidatorMiddleware: MiddlewareAdapter,
+    private readonly profileIdPathParameterValidatorMiddleware: MiddlewareAdapter,
     private readonly controller: ControllerAdapter
   ) {
-    this.applyMiddlewares(this.middlewares);
+    this.applyGlobalMiddlewares(globalMiddlewares);
     this.initializeRoutes();
   }
 
-  public applyMiddlewares(
-    middlewares: Array<MiddlewareAdapter | ErrorHandlerMiddlewareAdapter>
+  public applyGlobalMiddlewares(
+    globalMiddlewares: Array<MiddlewareAdapter>
   ): void {
-    middlewares.forEach((middleware) => {
-      this.app.use(middleware.handle);
+    globalMiddlewares.forEach((middleware) => {
+      this.app.use(middleware);
     });
   }
 
@@ -25,6 +28,8 @@ export class Routes {
     // Route: GET /contracts/:id
     this.app.get(
       "/contracts/:id",
+      this.app.use(this.profileIdAuthenticationMiddleware),
+      this.app.use(this.contractIdPathParameterValidatorMiddleware),
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const contractDto = await this.controller.GetContractById(
           req.profileId || 0,
@@ -38,6 +43,7 @@ export class Routes {
     // Route: GET /contracts
     this.app.get(
       "/contracts",
+      this.app.use(this.profileIdAuthenticationMiddleware),
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const contractDtos = await this.controller.ListContracts(
           req.profileId || 0
@@ -49,6 +55,7 @@ export class Routes {
     // Route: GET /jobs/unpaid
     this.app.get(
       "/jobs/unpaid",
+      this.app.use(this.profileIdAuthenticationMiddleware),
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const jobDtos = await this.controller.ListUnpaidJobs(
           req.profileId || 0
@@ -60,6 +67,8 @@ export class Routes {
     // Route: POST /jobs/:job_id/pay
     this.app.post(
       "/jobs/:job_id/pay",
+      this.app.use(this.profileIdAuthenticationMiddleware),
+      this.app.use(this.jobIdIdPathParameterValidatorMiddleware),
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const jobDto = await this.controller.PayJob(
           req.profileId || 0,
@@ -72,6 +81,8 @@ export class Routes {
     // Route: POST /balances/deposit/:userId
     this.app.post(
       "/balances/deposit/:clientId",
+      this.app.use(this.profileIdAuthenticationMiddleware),
+      this.app.use(this.profileIdPathParameterValidatorMiddleware),
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const jobDto = await this.controller.DepositToClient(
           parseInt(req.params.clientId)

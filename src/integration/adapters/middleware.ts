@@ -8,6 +8,8 @@ import { ProfileRequest } from "../../infra/server/request";
  * for incoming requests. It processes the request, response, and
  * next function to determine if the request should proceed.
  */
-export interface MiddlewareAdapter {
-  handle(req: ProfileRequest, res: Response, next: NextFunction): void;
-}
+export type MiddlewareAdapter = (
+  req: ProfileRequest,
+  res: Response,
+  next: NextFunction
+) => Promise<void>;

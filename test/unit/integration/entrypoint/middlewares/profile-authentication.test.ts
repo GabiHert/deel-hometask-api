@@ -2,20 +2,18 @@ import { Response } from "express";
 import { ProfileEntity } from "../../../../../src/domain/entities/profile";
 import { ProfileNotFoundError } from "../../../../../src/domain/errors/profile-not-found";
 import { ProfileRequest } from "../../../../../src/infra/server/request";
-import { ProfileRepository } from "../../../../../src/integration/adapters/profile-repository";
+import { ProfileRepositoryAdapter } from "../../../../../src/integration/adapters/profile-repository";
 import { UnauthorizedError } from "../../../../../src/integration/entrypoint/errors/unauthorized";
 import { ProfileAuthentication } from "../../../../../src/integration/entrypoint/middlewares/profile-authentication";
 
 describe("ProfileAuthentication Middleware", () => {
-  let profileRepositoryMock: jest.Mocked<ProfileRepository>;
-  let profileAuthentication: ProfileAuthentication;
+  let profileRepositoryMock: jest.Mocked<ProfileRepositoryAdapter>;
   let nextMock: jest.Mock;
 
   beforeEach(() => {
     profileRepositoryMock = {
       findProfileById: jest.fn(),
-    } as unknown as jest.Mocked<ProfileRepository>;
-    profileAuthentication = new ProfileAuthentication(profileRepositoryMock);
+    } as unknown as jest.Mocked<ProfileRepositoryAdapter>;
     nextMock = jest.fn();
   });
 
@@ -24,7 +22,11 @@ describe("ProfileAuthentication Middleware", () => {
       get: jest.fn().mockReturnValue(undefined),
     } as unknown as ProfileRequest;
 
-    await profileAuthentication.handle(reqMock, {} as Response, nextMock);
+    await new ProfileAuthentication(profileRepositoryMock).create()(
+      reqMock,
+      {} as Response,
+      nextMock
+    );
 
     expect(nextMock).toHaveBeenCalledWith(
       new UnauthorizedError("profile_id is required")
@@ -36,8 +38,11 @@ describe("ProfileAuthentication Middleware", () => {
       get: jest.fn().mockReturnValue("abc"),
     } as unknown as ProfileRequest;
 
-    await profileAuthentication.handle(reqMock, {} as Response, nextMock);
-
+    await new ProfileAuthentication(profileRepositoryMock).create()(
+      reqMock,
+      {} as Response,
+      nextMock
+    );
     expect(nextMock).toHaveBeenCalledWith(
       new UnauthorizedError("invalid profile_id")
     );
@@ -48,8 +53,11 @@ describe("ProfileAuthentication Middleware", () => {
       get: jest.fn().mockReturnValue("0"),
     } as unknown as ProfileRequest;
 
-    await profileAuthentication.handle(reqMock, {} as Response, nextMock);
-
+    await new ProfileAuthentication(profileRepositoryMock).create()(
+      reqMock,
+      {} as Response,
+      nextMock
+    );
     expect(nextMock).toHaveBeenCalledWith(
       new UnauthorizedError("invalid profile_id")
     );
@@ -63,8 +71,11 @@ describe("ProfileAuthentication Middleware", () => {
     profileRepositoryMock.findProfileById.mockRejectedValue(
       new ProfileNotFoundError("profile with id '123' not found")
     );
-
-    await profileAuthentication.handle(reqMock, {} as Response, nextMock);
+    await new ProfileAuthentication(profileRepositoryMock).create()(
+      reqMock,
+      {} as Response,
+      nextMock
+    );
 
     expect(nextMock).toHaveBeenCalledWith(
       new UnauthorizedError("invalid profile_id")
@@ -80,8 +91,11 @@ describe("ProfileAuthentication Middleware", () => {
       id: 123,
     } as ProfileEntity);
 
-    await profileAuthentication.handle(reqMock, {} as Response, nextMock);
-
+    await new ProfileAuthentication(profileRepositoryMock).create()(
+      reqMock,
+      {} as Response,
+      nextMock
+    );
     expect(nextMock).toHaveBeenCalledWith();
   });
 
@@ -93,8 +107,11 @@ describe("ProfileAuthentication Middleware", () => {
     const unexpectedError = new Error("Unexpected error");
     profileRepositoryMock.findProfileById.mockRejectedValue(unexpectedError);
 
-    await profileAuthentication.handle(reqMock, {} as Response, nextMock);
-
+    await new ProfileAuthentication(profileRepositoryMock).create()(
+      reqMock,
+      {} as Response,
+      nextMock
+    );
     expect(nextMock).toHaveBeenCalledWith(unexpectedError);
   });
 });

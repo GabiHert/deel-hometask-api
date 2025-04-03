@@ -5,7 +5,7 @@ import { MiddlewareAdapter } from "../../adapters/middleware";
 import { ProfileRepositoryAdapter } from "../../adapters/profile-repository";
 import { UnauthorizedError } from "../errors/unauthorized";
 
-export class ProfileAuthentication implements MiddlewareAdapter {
+export class ProfileAuthentication {
   constructor(private readonly profileRepository: ProfileRepositoryAdapter) {}
   private validateProfileId(profileId: string | undefined): number {
     if (!profileId) {
@@ -17,23 +17,22 @@ export class ProfileAuthentication implements MiddlewareAdapter {
     }
     return id;
   }
-  async handle(
-    req: ProfileRequest,
-    _res: Response,
-    next: Function
-  ): Promise<void> {
-    try {
-      const profileId = this.validateProfileId(req.get("profile_id"));
-      await this.profileRepository.findProfileById(profileId).catch((err) => {
+  create(): MiddlewareAdapter {
+    return async (
+      req: ProfileRequest,
+      _res: Response,
+      next: Function
+    ): Promise<void> => {
+      try {
+        const profileId = this.validateProfileId(req.get("profile_id"));
+        await this.profileRepository.findProfileById(profileId);
+      } catch (err) {
         if (err instanceof ProfileNotFoundError) {
-          throw new UnauthorizedError("invalid profile_id");
+          return next(new UnauthorizedError("invalid profile_id"));
         }
-        throw err;
-      });
-
+        return next(err);
+      }
       next();
-    } catch (error) {
-      next(error);
-    }
+    };
   }
 }
