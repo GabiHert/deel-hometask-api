@@ -9,14 +9,16 @@ export class MetricsController implements MetricsControllerAdapter {
   constructor(private readonly profileRepository: ProfileRepositoryAdapter) {}
   async getMostSuccessfulProfession(
     listQuery: ListQueryDto
-  ): Promise<TopEarningProfessionMetricsDto> {
+  ): Promise<TopEarningProfessionMetricsDto[]> {
     const listQueryEntity = listQuery.toEntity();
     const topEarningProfessionMetrics =
       await this.profileRepository.getTopEarningProfessionMetrics(
         listQueryEntity
       );
 
-    return new TopEarningProfessionMetricsDto(topEarningProfessionMetrics);
+    return TopEarningProfessionMetricsDto.FromEntities(
+      topEarningProfessionMetrics
+    );
   }
   async listTopPayingClients(
     listQuery: ListQueryDto
