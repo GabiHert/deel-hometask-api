@@ -40,7 +40,7 @@ export class ClientRepository implements ClientRepositoryAdapter {
                 throw new ProfileNotFoundError(`client with id ${clientId} not found`);
             }
 
-            clientProfile.balance += depositAmount;
+            clientProfile.balance = new Decimal(clientProfile.balance).plus(depositAmount).toNumber();
 
             await this.updateClientProfile(clientProfile, trx);
 

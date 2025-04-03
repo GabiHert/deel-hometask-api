@@ -1,4 +1,4 @@
-import express, { Response } from "express";
+import express, { Express, Response } from "express";
 import { ClientControllerAdapter } from "../../integration/adapters/client-controller";
 import { ContractControllerAdapter } from "../../integration/adapters/contract-controller";
 import { JobControllerAdapter } from "../../integration/adapters/job-controller";
@@ -9,8 +9,7 @@ import { ListQueryDto } from "../../integration/entrypoint/dtos/list-query";
 import { ProfileRequest } from "./request";
 
 export class Routes {
-  app = express();
-
+  private app: Express;
   constructor(
     private readonly globalMiddlewares: Array<MiddlewareAdapter>,
     private readonly profileIdAuthenticationMiddleware: MiddlewareAdapter,
@@ -21,24 +20,14 @@ export class Routes {
     private readonly metricsController: MetricsControllerAdapter,
     private readonly jobController: JobControllerAdapter,
     private readonly contractController: ContractControllerAdapter,
-    private readonly clientController: ClientControllerAdapter
+    private readonly clientController: ClientControllerAdapter,
+    app: Express
   ) {
-    this.initializeRoutes();
-    this.applyGlobalMiddlewares(this.globalMiddlewares);
-  }
-
-  private applyGlobalMiddlewares(
-    globalMiddlewares: Array<MiddlewareAdapter>
-  ): void {
-    globalMiddlewares.forEach((middleware) => {
-      this.app.use(middleware);
-    });
-
-    // Ensure JSON response type is set globally
+    this.app = app;
     this.app.use(express.json());
-    this.app.use((_req, res, next) => {
-      res.setHeader("Content-Type", "application/json");
-      next();
+    this.initializeRoutes();
+    this.globalMiddlewares.forEach((middleware) => {
+      this.app.use(middleware);
     });
   }
 
@@ -88,14 +77,14 @@ export class Routes {
       }
     );
     this.app.post(
-      "/balances/deposit/:clientId",
+      "/balances/deposit/:profileId",
       this.profileIdAuthenticationMiddleware,
       this.profileIdPathParameterValidatorMiddleware,
       this.clientDepositBodyValidationMiddleware,
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const clientDeposit = new ClientDepositDto(req.body);
         const jobDto = await this.clientController.depositToClient(
-          parseInt(req.params.clientId),
+          parseInt(req.params.profileId),
           clientDeposit
         );
         res.status(200).json(jobDto);
@@ -133,7 +122,7 @@ export class Routes {
   serve(port: number) {
     try {
       this.app.listen(port, () => {
-        console.log("Expressthis.app Listening on Port 3001");
+        console.log("Expressapp Listening on Port 3001");
       });
     } catch (error) {
       console.error(`An error occurred: ${JSON.stringify(error)}`);

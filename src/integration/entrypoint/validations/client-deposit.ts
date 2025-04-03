@@ -3,10 +3,14 @@ import { JoiValidator } from "./validator";
 
 export class ClientDepositBodyValidator extends JoiValidator {
   private readonly schema = joi.object({
-    amount: joi.number().greater(1).required(),
+    amount: joi.number().greater(0).precision(2).required(),
   });
-  protected validationStrategy(input: any): joi.ValidationResult {
-    return this.schema.validate(input);
+  validationStrategy(
+    _path?: any,
+    body?: any,
+    _query?: any
+  ): joi.ValidationResult {
+    return this.schema.validate(body);
   }
   constructor() {
     super("Invalid input body");

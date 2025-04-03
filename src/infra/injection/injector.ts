@@ -1,5 +1,6 @@
-import bodyParser from "body-parser";
+import express from "express";
 import { DepositMoneyToClientUseCase } from "../../application/usecases/deposit-money-to-client";
+import { MiddlewareAdapter } from "../../integration/adapters/middleware";
 import { ClientController } from "../../integration/entrypoint/controllers/client-controller";
 import { ContractController } from "../../integration/entrypoint/controllers/contract-controller";
 import { JobController } from "../../integration/entrypoint/controllers/job-controller";
@@ -15,13 +16,13 @@ import { ContractRepository } from "../../integration/repositories/contracts";
 import { JobRepository } from "../../integration/repositories/jobs";
 import { ProfileRepository } from "../../integration/repositories/profiles";
 import { Routes } from "../server/rotes";
-import { MiddlewareAdapter } from "../../integration/adapters/middleware";
 
 export class Injector {
   private constructor() {}
   static Inject(): Routes {
+    const app = express();
+
     const globalMiddlewares: Array<MiddlewareAdapter> = [
-      bodyParser.json(),
       errorHandlerMiddleware,
     ];
     const contractIdPathParameterValidatorMiddleware =
@@ -57,7 +58,8 @@ export class Injector {
       metricsController,
       jobController,
       contractController,
-      clientController
+      clientController,
+      app
     );
     return routes;
   }

@@ -7,6 +7,6 @@ export class ClientDepositDto {
   }
 
   toEntity(): ClientDepositEntity {
-    return new ClientDepositEntity(this.amount);
+    return new ClientDepositEntity(Number(this.amount.toFixed(2)));
   }
 }

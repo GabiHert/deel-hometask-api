@@ -22,7 +22,11 @@ export abstract class JoiValidator {
     next: NextFunction
   ) => {
     try {
-      const { error } = this.validationStrategy(req.params, req.body, req.query);
+      const { error } = this.validationStrategy(
+        req.params,
+        req.body,
+        req.query
+      );
       if (error) {
         const errorDetails: ErrorDetail[] = error.details.map(
           (detail: any) => ({
