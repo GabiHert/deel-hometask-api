@@ -1,5 +1,3 @@
-import { MaxDepositRule } from "./eligibility/max-deposit";
-
 export abstract class EligibilityRule {
   private nextRule?: EligibilityRule;
 
@@ -22,5 +20,3 @@ export abstract class EligibilityRule {
     depositAmount: number
   ): boolean;
 }
-
-export const eligibilityRules = new MaxDepositRule();
