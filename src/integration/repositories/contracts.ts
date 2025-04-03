@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { ContractEntity } from "../../domain/entities/contract";
 import { ContractStatusEnum } from "../../domain/enums/contract-status";
 import { ContractRepositoryAdapter } from "../adapters/contract-repository";
@@ -11,13 +12,13 @@ export class ContractRepository implements ContractRepositoryAdapter {
     const contract = await ContractModel.findOne({
       where: {
         id,
-        profileId,
+        [Op.or]: [{ contractorId: profileId }, { clientId: profileId }],
       },
     });
 
     if (!contract) {
       throw new Error(
-        `Contract with id ${id} and profileId ${profileId} not found.`
+        `Contract with id ${id} and contractorId ${profileId} not found.`
       );
     }
 
@@ -29,7 +30,7 @@ export class ContractRepository implements ContractRepositoryAdapter {
   ): Promise<ContractEntity[]> {
     const contracts = await ContractModel.findAll({
       where: {
-        profileId,
+        [Op.or]: [{ contractorId: profileId }, { clientId: profileId }],
         status: ContractStatusEnum.IN_PROGRESS,
       },
     });

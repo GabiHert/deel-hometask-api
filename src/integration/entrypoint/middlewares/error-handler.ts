@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import { ApplicationBaseError } from "../../../domain/errors/application-base-error";
 import { ProfileRequest } from "../../../infra/server/request";
-import { ErrorHandlerMiddlewareAdapter } from "../../adapters/error-handler-middleware";
+import { MiddlewareAdapter } from "../../adapters/middleware";
 import { InternalServerError } from "../errors/internal-server-error";
 
 function parseErrorToJson(err: ApplicationBaseError) {
@@ -15,7 +15,7 @@ function parseErrorToJson(err: ApplicationBaseError) {
   };
 }
 
-export const errorHandler: ErrorHandlerMiddlewareAdapter = (
+export const errorHandlerMiddleware: MiddlewareAdapter = (
   err: Error,
   _req: ProfileRequest,
   res: Response,
@@ -25,5 +25,6 @@ export const errorHandler: ErrorHandlerMiddlewareAdapter = (
   if (err instanceof ApplicationBaseError) {
     baseError = err;
   }
+  res.setHeader("Content-Type", "application/json");
   res.status(baseError.statusCode).json(parseErrorToJson(baseError));
 };

@@ -7,10 +7,12 @@ import { MiddlewareAdapter } from "../../integration/adapters/middleware";
 import { ClientDepositDto } from "../../integration/entrypoint/dtos/client-deposit";
 import { ListQueryDto } from "../../integration/entrypoint/dtos/list-query";
 import { ProfileRequest } from "./request";
+
 export class Routes {
-  private app = express();
+  app = express();
+
   constructor(
-    globalMiddlewares: Array<MiddlewareAdapter>,
+    private readonly globalMiddlewares: Array<MiddlewareAdapter>,
     private readonly profileIdAuthenticationMiddleware: MiddlewareAdapter,
     private readonly contractIdPathParameterValidatorMiddleware: MiddlewareAdapter,
     private readonly jobIdIdPathParameterValidatorMiddleware: MiddlewareAdapter,
@@ -21,8 +23,8 @@ export class Routes {
     private readonly contractController: ContractControllerAdapter,
     private readonly clientController: ClientControllerAdapter
   ) {
-    this.applyGlobalMiddlewares(globalMiddlewares);
     this.initializeRoutes();
+    this.applyGlobalMiddlewares(this.globalMiddlewares);
   }
 
   private applyGlobalMiddlewares(
@@ -31,13 +33,20 @@ export class Routes {
     globalMiddlewares.forEach((middleware) => {
       this.app.use(middleware);
     });
+
+    // Ensure JSON response type is set globally
+    this.app.use(express.json());
+    this.app.use((_req, res, next) => {
+      res.setHeader("Content-Type", "application/json");
+      next();
+    });
   }
 
   private initializeRoutes(): void {
     this.app.get(
       "/contracts/:id",
-      this.app.use(this.profileIdAuthenticationMiddleware),
-      this.app.use(this.contractIdPathParameterValidatorMiddleware),
+      this.profileIdAuthenticationMiddleware,
+      this.contractIdPathParameterValidatorMiddleware,
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const contractDto = await this.contractController.getContractById(
           req.profileId || 0,
@@ -46,10 +55,9 @@ export class Routes {
         res.status(200).json(contractDto);
       }
     );
-
     this.app.get(
       "/contracts",
-      this.app.use(this.profileIdAuthenticationMiddleware),
+      this.profileIdAuthenticationMiddleware,
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const contractDtos = await this.contractController.listContracts(
           req.profileId || 0
@@ -57,10 +65,9 @@ export class Routes {
         res.status(200).json(contractDtos);
       }
     );
-
     this.app.get(
       "/jobs/unpaid",
-      this.app.use(this.profileIdAuthenticationMiddleware),
+      this.profileIdAuthenticationMiddleware,
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const jobDtos = await this.jobController.listUnpaidJobs(
           req.profileId || 0
@@ -68,11 +75,10 @@ export class Routes {
         res.status(200).json(jobDtos);
       }
     );
-
     this.app.post(
       "/jobs/:job_id/pay",
-      this.app.use(this.profileIdAuthenticationMiddleware),
-      this.app.use(this.jobIdIdPathParameterValidatorMiddleware),
+      this.profileIdAuthenticationMiddleware,
+      this.jobIdIdPathParameterValidatorMiddleware,
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const jobDto = await this.jobController.payJob(
           req.profileId || 0,
@@ -81,12 +87,11 @@ export class Routes {
         res.status(200).json(jobDto);
       }
     );
-
     this.app.post(
       "/balances/deposit/:clientId",
-      this.app.use(this.profileIdAuthenticationMiddleware),
-      this.app.use(this.profileIdPathParameterValidatorMiddleware),
-      this.app.use(this.clientDepositBodyValidationMiddleware),
+      this.profileIdAuthenticationMiddleware,
+      this.profileIdPathParameterValidatorMiddleware,
+      this.clientDepositBodyValidationMiddleware,
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const clientDeposit = new ClientDepositDto(req.body);
         const jobDto = await this.clientController.depositToClient(
@@ -96,7 +101,6 @@ export class Routes {
         res.status(200).json(jobDto);
       }
     );
-
     this.app.get(
       "/admin/best-profession",
       async (req: ProfileRequest, res: Response): Promise<void> => {
@@ -110,7 +114,6 @@ export class Routes {
         res.status(200).json(mostSuccessfulProfessionDto);
       }
     );
-
     this.app.get(
       "/admin/best-clients",
       async (req: ProfileRequest, res: Response): Promise<void> => {
@@ -130,7 +133,7 @@ export class Routes {
   serve(port: number) {
     try {
       this.app.listen(port, () => {
-        console.log("Express App Listening on Port 3001");
+        console.log("Expressthis.app Listening on Port 3001");
       });
     } catch (error) {
       console.error(`An error occurred: ${JSON.stringify(error)}`);

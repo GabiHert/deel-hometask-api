@@ -1,10 +1,10 @@
 import bodyParser from "body-parser";
 import { DepositMoneyToClientUseCase } from "../../application/usecases/deposit-money-to-client";
-import { MiddlewareAdapter } from "../../integration/adapters/middleware";
 import { ClientController } from "../../integration/entrypoint/controllers/client-controller";
 import { ContractController } from "../../integration/entrypoint/controllers/contract-controller";
 import { JobController } from "../../integration/entrypoint/controllers/job-controller";
 import { MetricsController } from "../../integration/entrypoint/controllers/metrics-controller";
+import { errorHandlerMiddleware } from "../../integration/entrypoint/middlewares/error-handler";
 import { ProfileAuthenticationMiddleware } from "../../integration/entrypoint/middlewares/profile-authentication";
 import { ClientDepositBodyValidator } from "../../integration/entrypoint/validations/client-deposit";
 import { ContractIdPathParameterValidator } from "../../integration/entrypoint/validations/contract-id-path-parameter";
@@ -15,11 +15,15 @@ import { ContractRepository } from "../../integration/repositories/contracts";
 import { JobRepository } from "../../integration/repositories/jobs";
 import { ProfileRepository } from "../../integration/repositories/profiles";
 import { Routes } from "../server/rotes";
+import { MiddlewareAdapter } from "../../integration/adapters/middleware";
 
 export class Injector {
   private constructor() {}
   static Inject(): Routes {
-    const globalMiddlewares: Array<MiddlewareAdapter> = [bodyParser.json()];
+    const globalMiddlewares: Array<MiddlewareAdapter> = [
+      bodyParser.json(),
+      errorHandlerMiddleware,
+    ];
     const contractIdPathParameterValidatorMiddleware =
       new ContractIdPathParameterValidator().validate;
     const jobIdIdPathParameterValidatorMiddleware =

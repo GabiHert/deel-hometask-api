@@ -20,6 +20,10 @@ export class ContractModel extends Sequelize.Model {
 
 ContractModel.init(
   {
+    contractorId: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+    },
     terms: {
       type: Sequelize.TEXT,
       allowNull: false,

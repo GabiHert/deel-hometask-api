@@ -1,6 +1,8 @@
 import { ContractModel } from "./contract";
 import { JobModel } from "./job";
 import { Profile as ProfileModel } from "./profile";
+
+// Define associations
 ProfileModel.hasMany(ContractModel, {
   as: "Contractor",
   foreignKey: "ContractorId",

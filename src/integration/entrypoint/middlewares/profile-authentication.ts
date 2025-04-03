@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { ProfileNotFoundError } from "../../../domain/errors/profile-not-found";
 import { ProfileRequest } from "../../../infra/server/request";
 import { MiddlewareAdapter } from "../../adapters/middleware";
@@ -19,20 +19,23 @@ export class ProfileAuthenticationMiddleware {
   }
   create(): MiddlewareAdapter {
     return async (
-      req: ProfileRequest,
-      _res: Response,
+      req: Request,
+      res: Response,
       next: Function
     ): Promise<void> => {
       try {
         const profileId = this.validateProfileId(req.get("profile_id"));
         await this.profileRepository.findProfileById(profileId);
+
+        // Attach profileId to the request object
+        (req as ProfileRequest).profileId = profileId;
+        next();
       } catch (err) {
         if (err instanceof ProfileNotFoundError) {
           return next(new UnauthorizedError("invalid profile_id"));
         }
         return next(err);
       }
-      next();
     };
   }
 }
