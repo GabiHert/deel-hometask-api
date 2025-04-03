@@ -12,4 +12,4 @@ export type MiddlewareAdapter = (
   req: ProfileRequest,
   res: Response,
   next: NextFunction
-) => Promise<void>;
+) => Promise<void> | void;

@@ -1,7 +1,7 @@
 import joi from "joi";
 import { JoiValidator } from "./validator";
 
-export class ClientDepositValidator extends JoiValidator {
+export class ClientDepositBodyValidator extends JoiValidator {
   private readonly schema = joi.object({
     amount: joi.number().greater(1).required(),
   });

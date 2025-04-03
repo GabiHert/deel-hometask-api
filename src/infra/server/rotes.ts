@@ -8,7 +8,7 @@ import { ClientDepositDto } from "../../integration/entrypoint/dtos/client-depos
 import { ListQueryDto } from "../../integration/entrypoint/dtos/list-query";
 import { ProfileRequest } from "./request";
 export class Routes {
-  public app = express();
+  private app = express();
   constructor(
     globalMiddlewares: Array<MiddlewareAdapter>,
     private readonly profileIdAuthenticationMiddleware: MiddlewareAdapter,
@@ -25,7 +25,7 @@ export class Routes {
     this.initializeRoutes();
   }
 
-  public applyGlobalMiddlewares(
+  private applyGlobalMiddlewares(
     globalMiddlewares: Array<MiddlewareAdapter>
   ): void {
     globalMiddlewares.forEach((middleware) => {
@@ -125,5 +125,16 @@ export class Routes {
         res.status(200).json(bestClients);
       }
     );
+  }
+
+  serve(port: number) {
+    try {
+      this.app.listen(port, () => {
+        console.log("Express App Listening on Port 3001");
+      });
+    } catch (error) {
+      console.error(`An error occurred: ${JSON.stringify(error)}`);
+      process.exit(1);
+    }
   }
 }

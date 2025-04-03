@@ -5,7 +5,7 @@ import { MiddlewareAdapter } from "../../adapters/middleware";
 import { ProfileRepositoryAdapter } from "../../adapters/profile-repository";
 import { UnauthorizedError } from "../errors/unauthorized";
 
-export class ProfileAuthentication {
+export class ProfileAuthenticationMiddleware {
   constructor(private readonly profileRepository: ProfileRepositoryAdapter) {}
   private validateProfileId(profileId: string | undefined): number {
     if (!profileId) {
