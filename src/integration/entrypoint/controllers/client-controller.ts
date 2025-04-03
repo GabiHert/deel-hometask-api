@@ -1,4 +1,4 @@
-import { DepositToClientUseCaseAdapter } from "../../../application/adapter/deposit-money-to-client-use-case";
+import { DepositToClientUseCaseAdapter } from "../../../application/adapters/deposit-money-to-client-use-case";
 import { ClientControllerAdapter } from "../../adapters/client-controller";
 import { ClientDepositDto } from "../dtos/client-deposit";
 import { ProfileDto } from "../dtos/profile";

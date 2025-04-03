@@ -1,4 +1,4 @@
-import { DepositToClientUseCaseAdapter } from "../../../../../src/application/adapter/deposit-money-to-client-use-case";
+import { DepositToClientUseCaseAdapter } from "../../../../../src/application/adapters/deposit-money-to-client-use-case";
 import { ProfileEntity } from "../../../../../src/domain/entities/profile";
 import { ClientController } from "../../../../../src/integration/entrypoint/controllers/client-controller";
 import { ClientDepositDto } from "../../../../../src/integration/entrypoint/dtos/client-deposit";

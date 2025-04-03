@@ -1,4 +1,3 @@
-import { PayJobUseCaseAdapter } from "../../../../../src/application/adapter/pay-job-use-case";
 import { JobEntity } from "../../../../../src/domain/entities/job";
 import { JobRepositoryAdapter } from "../../../../../src/integration/adapters/job-repository";
 import { JobController } from "../../../../../src/integration/entrypoint/controllers/job-controller";
@@ -6,19 +5,15 @@ import { JobDto } from "../../../../../src/integration/entrypoint/dtos/job";
 
 describe("JobController", () => {
   let jobRepositoryMock: jest.Mocked<JobRepositoryAdapter>;
-  let payJobUseCaseMock: jest.Mocked<PayJobUseCaseAdapter>;
   let jobController: JobController;
 
   beforeEach(() => {
     jobRepositoryMock = {
       fetchUnpaidJobsByProfileId: jest.fn(),
+      payForJobIfClientHasSufficientBalance: jest.fn(),
     } as unknown as jest.Mocked<JobRepositoryAdapter>;
 
-    payJobUseCaseMock = {
-      payJob: jest.fn(),
-    } as unknown as jest.Mocked<PayJobUseCaseAdapter>;
-
-    jobController = new JobController(jobRepositoryMock, payJobUseCaseMock);
+    jobController = new JobController(jobRepositoryMock);
   });
 
   describe("listUnpaidJobs", () => {
@@ -68,7 +63,6 @@ describe("JobController", () => {
       );
     });
   });
-
   describe("payJob", () => {
     it("should process payment for a specific job and return the updated job details", async () => {
       const profileId = 1;
@@ -78,27 +72,35 @@ describe("JobController", () => {
         description: "Job 1",
         price: 100,
         contractId: 12,
-        paid: false,
+        paid: true,
         paymentDate: new Date(),
       };
 
-      payJobUseCaseMock.payJob.mockResolvedValue(updatedJob);
+      jobRepositoryMock.payForJobIfClientHasSufficientBalance.mockResolvedValue(
+        updatedJob
+      );
 
       const result = await jobController.payJob(profileId, jobId);
 
-      expect(payJobUseCaseMock.payJob).toHaveBeenCalledWith(profileId, jobId);
+      expect(
+        jobRepositoryMock.payForJobIfClientHasSufficientBalance
+      ).toHaveBeenCalledWith(profileId, jobId);
       expect(result).toEqual(new JobDto(updatedJob));
     });
 
     it("should throw an error if payment processing fails", async () => {
       const profileId = 1;
       const jobId = 1;
-      payJobUseCaseMock.payJob.mockRejectedValue(new Error("Payment error"));
+      jobRepositoryMock.payForJobIfClientHasSufficientBalance.mockRejectedValue(
+        new Error("Payment error")
+      );
 
       await expect(jobController.payJob(profileId, jobId)).rejects.toThrow(
         "Payment error"
       );
-      expect(payJobUseCaseMock.payJob).toHaveBeenCalledWith(profileId, jobId);
+      expect(
+        jobRepositoryMock.payForJobIfClientHasSufficientBalance
+      ).toHaveBeenCalledWith(profileId, jobId);
     });
   });
 });

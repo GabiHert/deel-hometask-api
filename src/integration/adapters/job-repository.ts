@@ -18,8 +18,12 @@ export interface JobRepositoryAdapter {
    * Processes payment for a job. Moves the payment amount from the client's balance
    * to the contractor's balance if the client's balance is sufficient.
    *
+   * @param clientId The ID of the client that is paying the contractor.
    * @param jobId The ID of the job to pay for.
    * @returns A promise that resolves when the payment is successfully processed.
    */
-  payForJob(jobId: number): Promise<void>;
+  payForJobIfClientHasSufficientBalance(
+    clientId: number,
+    jobId: number
+  ): Promise<JobEntity>;
 }
