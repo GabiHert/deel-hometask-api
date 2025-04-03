@@ -5,7 +5,7 @@ export class JobIdPathParameterValidator extends JoiValidator {
   private readonly schema = joi.object({
     jobId: joi.number().greater(0).required(),
   });
-  validationStrategy(
+  protected validationStrategy(
     path?: any,
     _body?: any,
     _query?: any

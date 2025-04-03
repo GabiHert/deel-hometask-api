@@ -11,6 +11,7 @@ import { ClientDepositBodyValidator } from "../../integration/entrypoint/validat
 import { ContractIdPathParameterValidator } from "../../integration/entrypoint/validations/contract-id-path-parameter";
 import { JobIdPathParameterValidator } from "../../integration/entrypoint/validations/job-id-path-parameter";
 import { ProfileIdPathParameterValidator } from "../../integration/entrypoint/validations/profile-id-path-parameter";
+import { QueryParametersValidator } from "../../integration/entrypoint/validations/query-parameters";
 import { ClientRepository } from "../../integration/repositories/clients";
 import { ContractRepository } from "../../integration/repositories/contracts";
 import { JobRepository } from "../../integration/repositories/jobs";
@@ -33,6 +34,8 @@ export class Injector {
       new ProfileIdPathParameterValidator().validate;
     const clientDepositBodyValidationMiddleware =
       new ClientDepositBodyValidator().validate;
+    const queryParametersValidationMiddleware = new QueryParametersValidator()
+      .validate;
 
     const profileRepository = new ProfileRepository();
     const contractRepository = new ContractRepository();
@@ -55,6 +58,7 @@ export class Injector {
       jobIdIdPathParameterValidatorMiddleware,
       profileIdPathParameterValidatorMiddleware,
       clientDepositBodyValidationMiddleware,
+      queryParametersValidationMiddleware,
       metricsController,
       jobController,
       contractController,

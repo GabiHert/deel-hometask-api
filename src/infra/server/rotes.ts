@@ -17,6 +17,7 @@ export class Routes {
     private readonly jobIdIdPathParameterValidatorMiddleware: MiddlewareAdapter,
     private readonly profileIdPathParameterValidatorMiddleware: MiddlewareAdapter,
     private readonly clientDepositBodyValidationMiddleware: MiddlewareAdapter,
+    private readonly queryParametersValidationMiddleware: MiddlewareAdapter,
     private readonly metricsController: MetricsControllerAdapter,
     private readonly jobController: JobControllerAdapter,
     private readonly contractController: ContractControllerAdapter,
@@ -92,6 +93,7 @@ export class Routes {
     );
     this.app.get(
       "/admin/best-profession",
+      this.queryParametersValidationMiddleware,
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const listQuery = new ListQueryDto({
           start: req.query.start as string,
@@ -105,6 +107,7 @@ export class Routes {
     );
     this.app.get(
       "/admin/best-clients",
+      this.queryParametersValidationMiddleware,
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const listQuery = new ListQueryDto({
           start: req.query.start as string,

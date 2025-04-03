@@ -5,7 +5,7 @@ export class ClientDepositBodyValidator extends JoiValidator {
   private readonly schema = joi.object({
     amount: joi.number().greater(0).precision(2).required(),
   });
-  validationStrategy(
+  protected validationStrategy(
     _path?: any,
     body?: any,
     _query?: any
