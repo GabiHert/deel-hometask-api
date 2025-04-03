@@ -30,11 +30,11 @@ export interface ProfileRepositoryAdapter {
    * who worked within the specified time range.
    *
    * @param listQuery - An object containing optional query parameters to filter, sort, or customize the search results.
-   * @returns A promise that resolves to the the profession metrics.
+   * @returns A promise that resolves to the the profession metrics list.
    */
   getTopEarningProfessionMetrics: (
     listQuery: ListQueryEntity
-  ) => Promise<TopEarningProfessionMetricsEntity>;
+  ) => Promise<TopEarningProfessionMetricsEntity[]>;
 
   /**
    * Deposits money into a client's balance.
