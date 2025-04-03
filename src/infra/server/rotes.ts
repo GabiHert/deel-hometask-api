@@ -44,13 +44,13 @@ export class Routes {
 
   private initializeRoutes(): void {
     this.app.get(
-      "/contracts/:id",
+      "/contracts/:contractId",
       this.profileIdAuthenticationMiddleware,
       this.contractIdPathParameterValidatorMiddleware,
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const contractDto = await this.contractController.getContractById(
           req.profileId || 0,
-          parseInt(req.params.id)
+          parseInt(req.params.contractId)
         );
         res.status(200).json(contractDto);
       }
@@ -76,7 +76,7 @@ export class Routes {
       }
     );
     this.app.post(
-      "/jobs/:job_id/pay",
+      "/jobs/:jobId/pay",
       this.profileIdAuthenticationMiddleware,
       this.jobIdIdPathParameterValidatorMiddleware,
       async (req: ProfileRequest, res: Response): Promise<void> => {
