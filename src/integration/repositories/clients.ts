@@ -9,67 +9,68 @@ import { JobRepositoryAdapter } from "../adapters/job-repository";
 import { ProfileModel } from "./models";
 
 export class ClientRepository implements ClientRepositoryAdapter {
-    constructor(private readonly jobsRepository: JobRepositoryAdapter) {}
+  constructor(private readonly jobsRepository: JobRepositoryAdapter) {}
 
-    async depositToClientIfEligible(
-        clientId: number,
-        depositAmount: number,
-        eligibilityRules: EligibilityRule
-    ): Promise<ProfileEntity> {
-        // Start a transaction
-        return await connection.transaction(async (trx) => {
-            const unpaidJobs = await this.jobsRepository.fetchUnpaidJobsByProfileId(
-                clientId
-            );
+  async depositToClientIfEligible(
+    clientId: number,
+    depositAmount: number,
+    eligibilityRules: EligibilityRule
+  ): Promise<ProfileEntity> {
+    return await connection.transaction(async (trx) => {
+      const unpaidJobs = await this.jobsRepository.fetchUnpaidJobsByProfileId(
+        clientId
+      );
 
-            const totalUnpaidJobsAmount = unpaidJobs.reduce(
-                (total, job) => total.plus(job.price),
-                new Decimal(0)
-            );
+      const totalUnpaidJobsAmount = unpaidJobs.reduce(
+        (total, job) => total.plus(job.price),
+        new Decimal(0)
+      );
 
-            const isEligible = eligibilityRules.check(
-                totalUnpaidJobsAmount.toNumber(),
-                depositAmount
-            );
-            if (!isEligible) {
-                throw new Error("Client is not eligible for the deposit.");
-            }
+      const isEligible = eligibilityRules.check(
+        totalUnpaidJobsAmount.toNumber(),
+        depositAmount
+      );
+      if (!isEligible) {
+        throw new Error("Client is not eligible for the deposit.");
+      }
 
-            const clientProfile = await this.getClientProfileById(clientId, trx);
-            if (!clientProfile) {
-                throw new ProfileNotFoundError(`client with id ${clientId} not found`);
-            }
+      const clientProfile = await this.getClientProfileById(clientId, trx);
+      if (!clientProfile) {
+        throw new ProfileNotFoundError(`client with id ${clientId} not found`);
+      }
 
-            clientProfile.balance = new Decimal(clientProfile.balance).plus(depositAmount).toNumber();
+      clientProfile.balance = new Decimal(clientProfile.balance)
+        .plus(depositAmount)
+        .toNumber();
 
-            await this.updateClientProfile(clientProfile, trx);
+      await this.updateClientProfile(clientProfile, trx);
 
-            return clientProfile;
-        });
+      return clientProfile;
+    });
+  }
+
+  private async getClientProfileById(
+    clientId: number,
+    trx: any
+  ): Promise<ProfileEntity | null> {
+    const profile = await ProfileModel.findOne({
+      where: { id: clientId, type: ProfileTypeEnum.CLIENT },
+      transaction: trx,
+    });
+
+    if (!profile) {
+      return null;
     }
+    return ProfileModel.ToEntity(profile);
+  }
 
-    private async getClientProfileById(
-        clientId: number,
-        trx: any
-    ): Promise<ProfileEntity | null> {
-        const profile = await ProfileModel.findOne({
-            where: { id: clientId, type: ProfileTypeEnum.CLIENT },
-            transaction: trx,
-        });
-
-        if (!profile) {
-            return null;
-        }
-        return ProfileModel.ToEntity(profile);
-    }
-
-    private async updateClientProfile(
-        profile: ProfileEntity,
-        trx: any
-    ): Promise<void> {
-        await ProfileModel.update(
-            { balance: profile.balance },
-            { where: { id: profile.id }, transaction: trx }
-        );
-    }
+  private async updateClientProfile(
+    profile: ProfileEntity,
+    trx: any
+  ): Promise<void> {
+    await ProfileModel.update(
+      { balance: profile.balance },
+      { where: { id: profile.id }, transaction: trx }
+    );
+  }
 }

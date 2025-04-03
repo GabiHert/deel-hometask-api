@@ -3,6 +3,7 @@ import { ContractEntity } from "../../domain/entities/contract";
 import { ContractStatusEnum } from "../../domain/enums/contract-status";
 import { ContractRepositoryAdapter } from "../adapters/contract-repository";
 import { ContractModel } from "./models";
+import { ContractNotFoundError } from "../../domain/errors/contract-not-found";
 
 export class ContractRepository implements ContractRepositoryAdapter {
   async getContractById(
@@ -17,7 +18,7 @@ export class ContractRepository implements ContractRepositoryAdapter {
     });
 
     if (!contract) {
-      throw new Error(
+      throw new ContractNotFoundError(
         `Contract with id ${id} and contractorId ${profileId} not found.`
       );
     }

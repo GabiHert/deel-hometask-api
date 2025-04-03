@@ -4,6 +4,7 @@ import { ListQueryEntity } from "../../domain/entities/list-query";
 import { ProfileEntity } from "../../domain/entities/profile";
 import { TopEarningProfessionMetricsEntity } from "../../domain/entities/top-earning-profession-metrics";
 import { TopPayingClientEntity } from "../../domain/entities/top-paying-client";
+import { ProfileNotFoundError } from "../../domain/errors/profile-not-found";
 import { connection } from "../../infra/db";
 import { ProfileRepositoryAdapter } from "../adapters/profile-repository";
 import { QueryBuilder } from "./builder/query-builder";
@@ -15,7 +16,7 @@ export class ProfileRepository implements ProfileRepositoryAdapter {
   async findProfileById(profileId: number): Promise<ProfileEntity> {
     const profile = await ProfileModel.findByPk(profileId);
     if (!profile) {
-      throw new Error(`Profile with ID ${profileId} not found`);
+      throw new ProfileNotFoundError(`profile with ID ${profileId} not found`);
     }
     return ProfileModel.ToEntity(profile);
   }
@@ -90,7 +91,7 @@ export class ProfileRepository implements ProfileRepositoryAdapter {
   ): Promise<ProfileEntity> {
     const profile = await ProfileModel.findByPk(clientId);
     if (!profile) {
-      throw new Error(`Profile with ID ${clientId} not found`);
+      throw new ProfileNotFoundError(`profile with ID ${clientId} not found`);
     }
 
     await connection.transaction(async (transaction) => {

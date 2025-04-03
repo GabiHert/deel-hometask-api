@@ -2,6 +2,10 @@ import Decimal from "decimal.js";
 import { JobEntity } from "../../domain/entities/job";
 import { ContractStatusEnum } from "../../domain/enums/contract-status";
 import { ProfileTypeEnum } from "../../domain/enums/profile-type";
+import { ContractNotFoundError } from "../../domain/errors/contract-not-found";
+import { JobNotFoundError } from "../../domain/errors/job-not-found";
+import { NotEnoughBalanceError } from "../../domain/errors/not-enough-balance";
+import { ProfileNotFoundError } from "../../domain/errors/profile-not-found";
 import { connection } from "../../infra/db";
 import { JobRepositoryAdapter } from "../adapters/job-repository";
 import { ContractModel, JobModel, ProfileModel } from "./models";
@@ -80,7 +84,7 @@ export class JobRepository implements JobRepositoryAdapter {
     });
 
     if (!job) {
-      throw new Error("unpaid job not found");
+      throw new JobNotFoundError("unpaid job not found");
     }
 
     const contract = await ContractModel.findOne({
@@ -96,11 +100,11 @@ export class JobRepository implements JobRepositoryAdapter {
     });
 
     if (!contract) {
-      throw new Error("Contract not found");
+      throw new ContractNotFoundError("contract not found");
     }
 
     if (!contract.dataValues.Client) {
-      throw new Error("Client not found");
+      throw new ProfileNotFoundError("client not found");
     }
 
     job.dataValues.Contract = contract;
@@ -109,13 +113,9 @@ export class JobRepository implements JobRepositoryAdapter {
   }
 
   private validateJobAndClient(job: any): void {
-    if (job.dataValues.paid) {
-      throw new Error("Job is already paid");
-    }
-
     const client = job.dataValues.Contract.Client;
     if (client.dataValues.balance < job.dataValues.price) {
-      throw new Error("Insufficient balance");
+      throw new NotEnoughBalanceError("insufficient balance");
     }
   }
 
