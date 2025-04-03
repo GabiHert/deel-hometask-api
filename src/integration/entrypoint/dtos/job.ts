@@ -1,6 +1,7 @@
 import { JobEntity } from "../../../domain/entities/job";
 
 export class JobDto {
+  id: number;
   description: string;
   price: number;
   paid: boolean;
@@ -8,12 +9,14 @@ export class JobDto {
   contractId: number;
 
   constructor({
+    id,
     description,
     price,
     paid,
     paymentDate,
     contractId,
   }: JobEntity) {
+    this.id = id;
     this.description = description;
     this.price = price;
     this.paid = paid;
