@@ -20,4 +20,8 @@ export class JobDto {
     this.paymentDate = paymentDate;
     this.contractId = contractId;
   }
+
+  static FromEntities(jobs: JobEntity[]): JobDto[] {
+    return jobs.map((job) => new JobDto(job));
+  }
 }

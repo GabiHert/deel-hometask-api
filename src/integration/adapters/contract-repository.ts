@@ -6,12 +6,13 @@ import { ContractEntity } from "../../domain/entities/contract";
  */
 export interface ContractRepositoryAdapter {
   /**
-   * Fetches a contract by its ID.
+   * Fetches a contract by its ID and associated profile ID.
    *
+   * @param profileId The ID of the profile (client or contractor) associated with the contract.
    * @param id The ID of the contract to fetch.
-   * @returns The contract with the given ID.
+   * @returns A promise that resolves to the contract with the given ID and profile ID.
    */
-  fetchContractById(id: number): Promise<ContractEntity>;
+  getContractById(profileId: number, id: number): Promise<ContractEntity>;
 
   /**
    * Fetches a list of contracts associated with a specific profile ID.
@@ -20,5 +21,5 @@ export interface ContractRepositoryAdapter {
    * @returns A promise that resolves to a list of contracts belonging to the specified profile.
    *          The list will only include contracts that are not terminated.
    */
-  fetchActiveContractsByProfileId(profileId: number): Promise<ContractEntity[]>;
+  listActiveContractsByProfileId(profileId: number): Promise<ContractEntity[]>;
 }

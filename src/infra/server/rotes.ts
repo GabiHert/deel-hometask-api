@@ -10,6 +10,7 @@ export class Routes {
     private readonly contractIdPathParameterValidatorMiddleware: MiddlewareAdapter,
     private readonly jobIdIdPathParameterValidatorMiddleware: MiddlewareAdapter,
     private readonly profileIdPathParameterValidatorMiddleware: MiddlewareAdapter,
+    private readonly clientDepositBodyValidationMiddleware: MiddlewareAdapter,
     private readonly controller: ControllerAdapter
   ) {
     this.applyGlobalMiddlewares(globalMiddlewares);
@@ -25,7 +26,6 @@ export class Routes {
   }
 
   private initializeRoutes(): void {
-    // Route: GET /contracts/:id
     this.app.get(
       "/contracts/:id",
       this.app.use(this.profileIdAuthenticationMiddleware),
@@ -35,12 +35,10 @@ export class Routes {
           req.profileId || 0,
           parseInt(req.params.id)
         );
-
         res.status(200).json(contractDto);
       }
     );
 
-    // Route: GET /contracts
     this.app.get(
       "/contracts",
       this.app.use(this.profileIdAuthenticationMiddleware),
@@ -52,7 +50,6 @@ export class Routes {
       }
     );
 
-    // Route: GET /jobs/unpaid
     this.app.get(
       "/jobs/unpaid",
       this.app.use(this.profileIdAuthenticationMiddleware),
@@ -64,7 +61,6 @@ export class Routes {
       }
     );
 
-    // Route: POST /jobs/:job_id/pay
     this.app.post(
       "/jobs/:job_id/pay",
       this.app.use(this.profileIdAuthenticationMiddleware),
@@ -78,11 +74,11 @@ export class Routes {
       }
     );
 
-    // Route: POST /balances/deposit/:userId
     this.app.post(
       "/balances/deposit/:clientId",
       this.app.use(this.profileIdAuthenticationMiddleware),
       this.app.use(this.profileIdPathParameterValidatorMiddleware),
+      this.app.use(this.clientDepositBodyValidationMiddleware),
       async (req: ProfileRequest, res: Response): Promise<void> => {
         const jobDto = await this.controller.DepositToClient(
           parseInt(req.params.clientId)
@@ -91,7 +87,6 @@ export class Routes {
       }
     );
 
-    // Route: GET /admin/best-profession
     this.app.get(
       "/admin/best-profession",
       async (req: ProfileRequest, res: Response): Promise<void> => {
@@ -104,7 +99,6 @@ export class Routes {
       }
     );
 
-    // Route: GET /admin/best-clients
     this.app.get(
       "/admin/best-clients",
       async (req: ProfileRequest, res: Response): Promise<void> => {

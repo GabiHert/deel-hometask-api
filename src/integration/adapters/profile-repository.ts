@@ -1,3 +1,4 @@
+import { TopEarningProfessionMetrics as TopEarningProfessionMetricsEntity } from "../../domain/entities/top-earning-profession-metrics";
 import { ProfileEntity } from "../../domain/entities/profile";
 
 /**
@@ -32,9 +33,12 @@ export interface ProfileRepositoryAdapter {
    *
    * @param startDate - The start date of the time period.
    * @param endDate - The end date of the time period.
-   * @returns A promise that resolves to the profession name.
+   * @returns A promise that resolves to the the profession metrics.
    */
-  getTopEarningProfession: (startDate: Date, endDate: Date) => Promise<string>;
+  getTopEarningProfessionMetrics: (
+    startDate?: Date,
+    endDate?: Date
+  ) => Promise<TopEarningProfessionMetricsEntity>;
 
   /**
    * Deposits money into a client's balance.

@@ -1,4 +1,4 @@
-export class MostSuccessfulProfessionDto {
+export class TopEarningProfessionMetrics {
   profession: string;
   totalJobs: number;
   averageEarningsPerJob: number;
@@ -6,7 +6,11 @@ export class MostSuccessfulProfessionDto {
     averageEarningsPerJob,
     profession,
     totalJobs,
-  }: MostSuccessfulProfessionDto) {
+  }: {
+    profession: string;
+    totalJobs: number;
+    averageEarningsPerJob: number;
+  }) {
     this.averageEarningsPerJob = averageEarningsPerJob;
     this.profession = profession;
     this.totalJobs = totalJobs;

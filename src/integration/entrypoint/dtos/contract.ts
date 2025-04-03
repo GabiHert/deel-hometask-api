@@ -13,4 +13,7 @@ export class ContractDto {
     this.clientId = clientId;
     this.contractorId = contractorId;
   }
+  static FromEntities(contracts: ContractEntity[]): ContractDto[] {
+    return contracts.map((contract) => new ContractDto(contract));
+  }
 }
